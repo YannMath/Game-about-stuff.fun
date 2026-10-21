@@ -1,0 +1,12 @@
+game\UI\MainFrame.class
+game\Logic\Factories\TileFactory.class
+game\Logic\Turn.class
+game\UI\GamePanel.class
+game\Objects\Tile$ImagePanel.class
+game\Objects\Player.class
+game\Objects\Player$ImagePanel.class
+game\Objects\Tile.class
+game\Objects\Dice.class
+game\UI\MainPanel.class
+game\Main.class
+game\UI\MenuPanel.class
