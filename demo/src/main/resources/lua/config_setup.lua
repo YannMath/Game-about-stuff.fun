@@ -4,12 +4,12 @@
 ]]
 
 setup = {
-    amountOfPlayers = 2,
+    amountOfPlayers = 3,
     startMoney = 1800,
     randomStartPos = false,
     aiActive = false,
     dice = {6, 6},
-    boardSize = 8
+    boardSize = 16
 }
 
 return setup

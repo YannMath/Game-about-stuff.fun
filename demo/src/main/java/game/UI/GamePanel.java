@@ -5,14 +5,12 @@ import java.awt.*;
 import org.luaj.vm2.LuaValue;
 
 import game.Logic.Factories.TileFactory;
-import game.Objects.Tile;
+import game.Objects.BoardTile;
 
 public class GamePanel extends JPanel {
     private final JPanel BOARD_PANEL = new JPanel();
     private GridBagConstraints gbc = new GridBagConstraints();
     private final TileFactory TF = new TileFactory();
-
-    private int boardSize;
     
     public GamePanel() {
         setLayout(new BorderLayout());
@@ -38,7 +36,7 @@ public class GamePanel extends JPanel {
             gbc.gridy = posY; 
             gbc.gridx = posX;
 
-            BOARD_PANEL.add(new Tile(name, price, imageFileName, pos), gbc);
+            BOARD_PANEL.add(new BoardTile(name, price, imageFileName, pos), gbc);
             BOARD_PANEL.revalidate();
             BOARD_PANEL.repaint();
         });
@@ -62,11 +60,11 @@ public class GamePanel extends JPanel {
 
                 for (int x = 1; x <= row.length(); x++) {
                     LuaValue tileValue = row.get(x);
-                    Tile currentTile;
+                    BoardTile currentTile;
                     if (tileValue.istable()) {
                         currentTile = TF.parseTileLuaToTile(tileValue);
-                    } else if (tileValue.isuserdata(Tile.class)) {
-                        currentTile = Tile.class.cast(tileValue.checkuserdata(Tile.class));
+                    } else if (tileValue.isuserdata(BoardTile.class)) {
+                        currentTile = BoardTile.class.cast(tileValue.checkuserdata(BoardTile.class));
                     } else {
                         throw new IllegalArgumentException(
                             "Expected a Lua table or Tile userdata at (" + x + ", " + y
@@ -110,9 +108,9 @@ public class GamePanel extends JPanel {
         }
     }
 
-    public Tile getTileByPos(int pos) {
+    public BoardTile getTileByPos(int pos) {
         for (Component component : BOARD_PANEL.getComponents()) {
-            if (component instanceof Tile tile) {
+            if (component instanceof BoardTile tile) {
                 if (tile.getPos() == pos) {
                     return tile;
                 }
@@ -121,5 +119,13 @@ public class GamePanel extends JPanel {
         return null;
     }
 
-    public void setBoardSize(int boardSize) {this.boardSize = boardSize;}
+    public int getBoardSize() {
+        int tileCount = 0;
+        for (Component component : BOARD_PANEL.getComponents()) {
+            if (component instanceof BoardTile tile && tile.getPos() >= 0) {
+                tileCount++;
+            }
+        }
+        return tileCount;
+    }
 }

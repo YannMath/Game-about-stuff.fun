@@ -6,11 +6,14 @@ import javax.swing.*;
 import game.Main;
 public class Player {
     private final ImagePanel IMAGE_CONTAINER;
+    private final Color PLAYER_COLOR;
 
     private int money = 0;
     private int pos = 0;
     
-    public Player(String imageFileName) {
+    public Player(String imageFileName, Color c) {
+        PLAYER_COLOR = c;
+
         var imageURL = getClass().getResource("/images/" + imageFileName);
         if (imageURL == null) {
             throw new IllegalArgumentException(
@@ -18,6 +21,7 @@ public class Player {
             );
         }
         ImageIcon icon = new ImageIcon(imageURL);
+
         IMAGE_CONTAINER = new ImagePanel(icon.getImage());
     }
 
@@ -27,16 +31,84 @@ public class Player {
         System.out.println("A player received/had to pay money - current money: " + money);
     }
 
-    public void move(int n) {
-        int newPos = (pos + n) % Main.getBoardSize();
-        System.out.println("Player is now at position: " + newPos);
-        System.out.println("Old position: " + pos);
-        Tile currentTile = Main.getTileByPos(pos);
-        Tile targetTile = Main.getTileByPos(newPos);
-        this.pos = newPos;
+    public void buy() {
+        BoardTile targetTile = getCurrentTile();
+        buy(targetTile);
+    }
 
-        currentTile.onLeave(this);
-        targetTile.onEnter(this);
+    public void buy(BoardTile t) {
+        t.buy(this);
+    }
+
+    public void move(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException("Movement steps must not be negative: " + n);
+        }
+
+        int boardSize = Main.getBoardSize();
+        if (boardSize <= 0) {
+            throw new IllegalStateException("Cannot move on a board with no positions");
+        }
+
+        for (int step = 0; step < n; step++) {
+            if (step > 0) {
+                pauseBetweenSteps();
+            }
+
+            runOnEventDispatchThread(() -> {
+                int oldPos = pos;
+                int newPos = (oldPos + 1) % boardSize;
+                BoardTile currentTile = Main.getTileByPos(oldPos);
+                BoardTile targetTile = Main.getTileByPos(newPos);
+                if (currentTile == null || targetTile == null) {
+                    throw new IllegalStateException(
+                        "Cannot move from board position " + oldPos + " to " + newPos
+                        + ": a tile is missing"
+                    );
+                }
+
+                currentTile.onLeave(this);
+                pos = newPos;
+                targetTile.onEnter(this);
+                System.out.println("Player moved from position " + oldPos + " to " + newPos);
+            });
+        }
+    }
+
+    private void pauseBetweenSteps() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            return;
+        }
+
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Player movement was interrupted", exception);
+        }
+    }
+
+    private void runOnEventDispatchThread(Runnable action) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            action.run();
+            return;
+        }
+
+        try {
+            SwingUtilities.invokeAndWait(action);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Player movement was interrupted", exception);
+        } catch (java.lang.reflect.InvocationTargetException exception) {
+            Throwable cause = exception.getCause();
+            if (cause instanceof RuntimeException runtimeException) {
+                throw runtimeException;
+            }
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            throw new IllegalStateException("Could not move player", cause);
+        }
     }
 
     public JComponent getImageComponent() {
@@ -80,4 +152,9 @@ public class Player {
     }
 
     public void setPos(int pos) {this.pos = pos;}
+
+    public Color getColor() {return this.PLAYER_COLOR;}
+    public int getPos() {return pos;}
+    public int getMoney() {return money;}
+    public BoardTile getCurrentTile() {return Main.getTileByPos(pos);}
 }

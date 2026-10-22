@@ -1,7 +1,9 @@
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\Logic\Factories\TileFactory.java
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\Logic\Turn.java
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\Main.java
+F:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\BoardTile.java
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Dice.java
+F:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\DisplayTile.java
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Player.java
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Tile.java
 F:\Swing\Text_based_game.fun\demo\src\main\java\game\UI\GamePanel.java

@@ -3,6 +3,7 @@ package game;
 import javax.swing.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.awt.Color;
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.WatchEvent;
@@ -12,13 +13,17 @@ import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
+import java.util.Map;
+
 import com.formdev.flatlaf.FlatDarkLaf;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 import org.luaj.vm2.LuaValue;
@@ -29,7 +34,7 @@ import game.UI.MainFrame;
 import game.UI.GamePanel;
 import game.Objects.Player;
 import game.Objects.Dice;
-import game.Objects.Tile;
+import game.Objects.BoardTile;
 
 public class Main {
     private static MainFrame mainFrame;
@@ -39,10 +44,17 @@ public class Main {
     private static boolean running = false;
     private static List<Player> players = new ArrayList<>();
     private static List<Dice> dice = new ArrayList<>();
+    private static final Map<Color, String> COLOR_TO_IMAGE =
+    new HashMap<>(Map.of(
+        Color.CYAN, "default_player_cyan.png",
+        Color.MAGENTA, "default_player_cyan.png",
+        Color.ORANGE, "default_player_cyan.png",
+        Color.GREEN, "default_player_green.png"
+    ));
     private static Player currentPlayer;
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
-    private static int boardSize = 8;
+    private static int boardSize = -1;
     
     public static void main(String[] args) throws Exception {
         FlatDarkLaf.setup();
@@ -64,8 +76,15 @@ public class Main {
         SwingUtilities.invokeAndWait(() -> {
             mainFrame = new MainFrame();
             mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            globals.set("color", CoerceJavaToLua.coerce(Color.class));
             globals.set("board", CoerceJavaToLua.coerce(mainFrame.getGamePanel()));
             globals.set("tile", CoerceJavaToLua.coerce(new TileFactory()));
+            globals.set("rollAllDice", new ZeroArgFunction() {
+                @Override
+                public LuaValue call() {
+                    return LuaValue.valueOf(rollDice());
+                }
+            });
             loadLuaFile("config_boardSetup");
             setup();
             mainFrame.pack();
@@ -81,13 +100,19 @@ public class Main {
         if (setup.istable()) {
             if (!setup.get("amountOfPlayers").isnil()) {
                 amountOfPlayers = setup.get("amountOfPlayers").toint();
+                if (amountOfPlayers < 1) {
+                    throw new IllegalArgumentException("amountOfPlayers must be at least 1");
+                }
                 for (int i = 0; i < amountOfPlayers; i++) {
-                    Player p = new Player("default_player.png");
+                    Player p = new Player("default_player.png", Color.CYAN);
                     p.setPos(0);
                     players.add(p);
 
-                    Tile startTile = mainFrame.getGamePanel().getTileByPos(0);
-                    startTile.onEnter(p);
+                    BoardTile startTile = mainFrame.getGamePanel().getTileByPos(0);
+                    if (startTile == null) {
+                        throw new IllegalStateException("The board does not contain a start tile at position 0");
+                    }
+                    startTile.onEnter(p, false);
 
                     System.out.println("Added Player " + (i + 1));
                 }
@@ -112,33 +137,53 @@ public class Main {
             }
             if (!setup.get("boardSize").isnil()) {
                 boardSize = setup.get("boardSize").toint();
+            } else {
+                boardSize = mainFrame.getGamePanel().getBoardSize();
             }
+            validateBoard();
         } else {
             throw new IllegalArgumentException(
                 "The config_setup.lua file is either not present or is not correct"
             );
         }
-        mainFrame.getGamePanel().setBoardSize(setup.get("boardSize").toint());
     }
 
     private static void gameLoop() {
-        running = true; 
+        running = true;
         int index = 0;
 
         while (running) {
             try {
                 Thread.sleep(1500);
-            } catch (InterruptedException e) {
-                System.out.println("Something went wrong when pausing the game loop");
+            } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
+                return;
             }
-            index++;
-            index %= amountOfPlayers; 
 
-            if(!players.isEmpty()) 
-                Turn.doTurn(players.get(index));
-            else {
-                throw new IllegalStateException("There are appearantly no players in the players array");
+            if (players.isEmpty()) {
+                throw new IllegalStateException("There are no players in the players list");
+            }
+
+            Turn.doTurn(players.get(index));
+            index = (index + 1) % players.size();
+        }
+    }
+
+    private static void validateBoard() {
+        if (boardSize <= 0) {
+            throw new IllegalArgumentException("boardSize must be greater than zero");
+        }
+
+        GamePanel board = mainFrame.getGamePanel();
+        if (board.getBoardSize() != boardSize) {
+            throw new IllegalStateException(
+                "Configured boardSize " + boardSize + " does not match the "
+                + board.getBoardSize() + " playable tiles"
+            );
+        }
+        for (int pos = 0; pos < boardSize; pos++) {
+            if (board.getTileByPos(pos) == null) {
+                throw new IllegalStateException("The board is missing tile position " + pos);
             }
         }
     }
@@ -221,7 +266,7 @@ public class Main {
         return key.reset();
     }
 
-    public static Tile getTileByPos(int pos) {
+    public static BoardTile getTileByPos(int pos) {
         GamePanel board = mainFrame.getGamePanel();
         return board.getTileByPos(pos);
     }

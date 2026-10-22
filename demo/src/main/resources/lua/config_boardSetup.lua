@@ -32,21 +32,29 @@ local startTile = {
     end
 }
 
-local blumenstrasse1 = createBlumenstrasse("Blumenstrasse 13", 1)
-local blumenstrasse2 = createBlumenstrasse("Blumenstrasse 13", 2)
-local blumenstrasse3 = createBlumenstrasse("Blumenstrasse 13", 3)
-local blumenstrasse4 = createBlumenstrasse("Blumenstrasse 13", 4)
-local blumenstrasse5 = createBlumenstrasse("Blumenstrasse 13", 5)
-local blumenstrasse6 = createBlumenstrasse("Blumenstrasse 13", 6)
-local blumenstrasse7 = createBlumenstrasse("Blumenstrasse 13", 7)
-local blumenstrasse8 = createBlumenstrasse("Blumenstrasse 13", 8)
-local blumenstrasse9 = createBlumenstrasse("Blumenstrasse 13", 9)
-local blumenstrasse10= createBlumenstrasse("Blumenstrasse 13", 10)
-local blumenstrasse11= createBlumenstrasse("Blumenstrasse 13", 11)
-local blumenstrasse12= createBlumenstrasse("Blumenstrasse 13", 12)
-local blumenstrasse13= createBlumenstrasse("Blumenstrasse 13", 13)
-local blumenstrasse14= createBlumenstrasse("Blumenstrasse 13", 14)
-local blumenstrasse15= createBlumenstrasse("Blumenstrasse 13", 15)
+local diceTile = {
+    text = "Roll all dice",
+    interaction = function(player, game)
+        rollAllDice()
+        text = roll
+    end
+}
+
+local blumenstrasse1 = createBlumenstrasse("Blumenstrasse", 1)
+local blumenstrasse2 = createBlumenstrasse("Blumenstrasse", 2)
+local blumenstrasse3 = createBlumenstrasse("Blumenstrasse", 3)
+local blumenstrasse4 = createBlumenstrasse("Blumenstrasse", 4)
+local blumenstrasse5 = createBlumenstrasse("Blumenstrasse", 5)
+local blumenstrasse6 = createBlumenstrasse("Blumenstrasse", 6)
+local blumenstrasse7 = createBlumenstrasse("Blumenstrasse", 7)
+local blumenstrasse8 = createBlumenstrasse("Blumenstrasse", 8)
+local blumenstrasse9 = createBlumenstrasse("Blumenstrasse", 9)
+local blumenstrasse10= createBlumenstrasse("Blumenstrasse", 10)
+local blumenstrasse11= createBlumenstrasse("Blumenstrasse", 11)
+local blumenstrasse12= createBlumenstrasse("Blumenstrasse", 12)
+local blumenstrasse13= createBlumenstrasse("Blumenstrasse", 13)
+local blumenstrasse14= createBlumenstrasse("Blumenstrasse", 14)
+local blumenstrasse15= createBlumenstrasse("Blumenstrasse", 15)
 
 local boardLayout = {}
 
