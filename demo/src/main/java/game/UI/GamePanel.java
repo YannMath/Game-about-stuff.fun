@@ -4,13 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import org.luaj.vm2.LuaValue;
 
-import game.Logic.Factories.TileFactory;
+import game.Logic.Convert;
 import game.Objects.BoardTile;
 
 public class GamePanel extends JPanel {
     private final JPanel BOARD_PANEL = new JPanel();
     private GridBagConstraints gbc = new GridBagConstraints();
-    private final TileFactory TF = new TileFactory();
+
     
     public GamePanel() {
         setLayout(new BorderLayout());
@@ -44,7 +44,7 @@ public class GamePanel extends JPanel {
 
     public void loadBoard(LuaValue boardLayout) {
         if (!boardLayout.istable()) {
-            throw new IllegalArgumentException("Board layout must be a Lua table");
+            throw new IllegalArgumentException("[ERROR] Board layout must be a Lua table");
         }
 
         runOnEventDispatchThread(() -> {
@@ -62,12 +62,12 @@ public class GamePanel extends JPanel {
                     LuaValue tileValue = row.get(x);
                     BoardTile currentTile;
                     if (tileValue.istable()) {
-                        currentTile = TF.parseTileLuaToTile(tileValue);
+                        currentTile = Convert.parseTileLuaToJava(tileValue);
                     } else if (tileValue.isuserdata(BoardTile.class)) {
                         currentTile = BoardTile.class.cast(tileValue.checkuserdata(BoardTile.class));
                     } else {
                         throw new IllegalArgumentException(
-                            "Expected a Lua table or Tile userdata at (" + x + ", " + y
+                            "[ERROR] Expected a Lua table or Tile userdata at (" + x + ", " + y
                             + "), but got: " + tileValue.typename()
                         );
                     }
@@ -95,7 +95,7 @@ public class GamePanel extends JPanel {
             SwingUtilities.invokeAndWait(action);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("Interrupted while updating the board", exception);
+            throw new IllegalStateException("[ERROR] Interrupted while updating the board", exception);
         } catch (java.lang.reflect.InvocationTargetException exception) {
             Throwable cause = exception.getCause();
             if (cause instanceof RuntimeException runtimeException) {
@@ -104,7 +104,7 @@ public class GamePanel extends JPanel {
             if (cause instanceof Error error) {
                 throw error;
             }
-            throw new IllegalStateException("Could not update the board", cause);
+            throw new IllegalStateException("[ERROR] Could not update the board", cause);
         }
     }
 

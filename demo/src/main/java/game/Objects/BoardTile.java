@@ -122,19 +122,19 @@ public class BoardTile extends Tile {
         }
     }
 
-    public void buy(Player player) {
-        if (isOwned()) {System.out.println("Tile is already owned"); return;}
-        if (player.getMoney() < price) {System.out.println("You don't have enough money to buy this property"); return;}
+    public void buy(Player player) {    // TODO: Add the LuaValue buyable so that they cannot buy the start tile anymore, duh!
+        if (isOwned()) {System.out.println("[NON PROGRAM ERROR] Tile is already owned"); return;}
+        if (player.getMoney() < price) {System.out.println("[NON PROGRAM ERROR] You don't have enough money to buy this property"); return;}
         owner = player;
         player.reduceMoney(price);
         PRICE_CONTAINER.setText("");
         PRICE_CONTAINER.setOpaque(true);
         PRICE_CONTAINER.setBackground(player.getColor());
 
-        System.out.println("Player bought " + locationName + " for " + price + "$");
+        System.out.println("[LOG] " + player.getName() + " bought " + locationName + " for " + price + "$");
     }
 
-    public void onEnter(Player p) {
+    public void onEnter(Player p) {     // TODO: Differentiate between onPass and onEnter
         onEnter(p, true);
     }
 

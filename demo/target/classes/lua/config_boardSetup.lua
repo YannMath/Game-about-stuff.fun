@@ -16,7 +16,7 @@ local function createBlumenstrasse(name, boardPos)
         price = 100,
         imageLink = "blumenstrasse.png",
         onEnter = function(player)
-            print(tostring(player) .. " entered the tile " .. name)
+            print("[LOG] " .. tostring(player:getName()) .. " entered the tile " .. name)
         end
     }
 end
@@ -28,7 +28,7 @@ local startTile = {
     imageLink = "start.jpeg",
     onEnter = function(player)
         player:reduceMoney(-200)
-        print(tostring(player) .. " received 200$ when crossing the start tile")
+        print("[LOG] " .. tostring(player:getName()) .. " received 200$ when crossing the start tile")
     end
 }
 

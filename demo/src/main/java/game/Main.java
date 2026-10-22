@@ -13,12 +13,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
-import java.util.Map;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import org.luaj.vm2.Globals;
@@ -29,6 +27,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import org.luaj.vm2.LuaValue;
 
 import game.Logic.Factories.TileFactory;
+import game.Logic.Convert;
 import game.Logic.Turn;
 import game.UI.MainFrame;
 import game.UI.GamePanel;
@@ -44,13 +43,6 @@ public class Main {
     private static boolean running = false;
     private static List<Player> players = new ArrayList<>();
     private static List<Dice> dice = new ArrayList<>();
-    private static final Map<Color, String> COLOR_TO_IMAGE =
-    new HashMap<>(Map.of(
-        Color.CYAN, "default_player_cyan.png",
-        Color.MAGENTA, "default_player_cyan.png",
-        Color.ORANGE, "default_player_cyan.png",
-        Color.GREEN, "default_player_green.png"
-    ));
     private static Player currentPlayer;
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
@@ -65,7 +57,7 @@ public class Main {
             scripts = Paths.get("src", "main", "resources", "lua");
         }
         if (!Files.isDirectory(scripts)) {
-            throw new IOException("Lua script directory not found: " + scripts.toAbsolutePath());
+            throw new IOException("[ERROR] Lua script directory not found: " + scripts.toAbsolutePath());
         }
         luaDirectory = scripts.toAbsolutePath().normalize();
 
@@ -96,55 +88,63 @@ public class Main {
     }
 
     private static void setup() {
-        LuaValue setup = loadLuaValue("config_setup");
-        if (setup.istable()) {
-            if (!setup.get("amountOfPlayers").isnil()) {
-                amountOfPlayers = setup.get("amountOfPlayers").toint();
-                if (amountOfPlayers < 1) {
-                    throw new IllegalArgumentException("amountOfPlayers must be at least 1");
-                }
+        LuaValue playerSetup = loadLuaValue("config_player");
+        if (!playerSetup.istable()) {
+            throw new IllegalArgumentException(
+                "[ERROR] config_player.lua must return an array of player tables"
+            );
+        }
+        for (int i = 1; i <= playerSetup.length(); i++) {
+            players.add(Convert.parsePlayerLuaToJava(playerSetup.get(i)));
+        }
+
+        LuaValue gameSetup = loadLuaValue("config_setup");
+        if (gameSetup.istable()) {
+            if (!gameSetup.get("amountOfExtraPlayers").isnil()) {
+                amountOfPlayers = gameSetup.get("amountOfExtraPlayers").toint();
                 for (int i = 0; i < amountOfPlayers; i++) {
-                    Player p = new Player("default_player.png", Color.CYAN);
-                    p.setPos(0);
+                    Player p = new Player("Player", "default_player_cyan.png", Color.CYAN);
                     players.add(p);
-
-                    BoardTile startTile = mainFrame.getGamePanel().getTileByPos(0);
-                    if (startTile == null) {
-                        throw new IllegalStateException("The board does not contain a start tile at position 0");
-                    }
-                    startTile.onEnter(p, false);
-
-                    System.out.println("Added Player " + (i + 1));
                 }
             }
-            if (!setup.get("startMoney").isnil()) {
-                startMoney = setup.get("startMoney").toint();
+            if (!gameSetup.get("startMoney").isnil()) {
+                startMoney = gameSetup.get("startMoney").toint();
                 for (Player p : players) {
                     p.reduceMoney(-startMoney);
                     
                 }
             }
-            if (!setup.get("dice").isnil()) {
-                LuaTable diceTable = (LuaTable) setup.get("dice");
+            if (!gameSetup.get("dice").isnil()) {
+                LuaTable diceTable = (LuaTable) gameSetup.get("dice");
 
                 for (int i = 1; i <= diceTable.length(); i++) { // it starts at one because of the array being created in Lua
                     int max = diceTable.get(i).toint();
                     Dice d = new Dice(max);
                     dice.add(d);
 
-                    System.out.println("Created new D-" + max);
+                    System.out.println("[LOG] Created new D-" + max);
                 }
             }
-            if (!setup.get("boardSize").isnil()) {
-                boardSize = setup.get("boardSize").toint();
+            if (!gameSetup.get("boardSize").isnil()) {
+                boardSize = gameSetup.get("boardSize").toint();
             } else {
                 boardSize = mainFrame.getGamePanel().getBoardSize();
             }
             validateBoard();
         } else {
             throw new IllegalArgumentException(
-                "The config_setup.lua file is either not present or is not correct"
+                "[ERROR] The config_setup.lua file is either not present or is not correct"
             );
+        }
+
+        BoardTile startTile = mainFrame.getGamePanel().getTileByPos(0);
+        if (startTile == null) {
+            throw new IllegalStateException("[ERROR] The board does not contain a start tile at position 0");
+        }
+        for (Player p : players) {
+            p.setPos(0);
+            startTile.onEnter(p, false);
+            System.out.println("[LOG] Added Player " + p.getName());
         }
     }
 
@@ -161,7 +161,7 @@ public class Main {
             }
 
             if (players.isEmpty()) {
-                throw new IllegalStateException("There are no players in the players list");
+                throw new IllegalStateException("[ERROR] There are no players in the players list");
             }
 
             Turn.doTurn(players.get(index));
@@ -171,19 +171,19 @@ public class Main {
 
     private static void validateBoard() {
         if (boardSize <= 0) {
-            throw new IllegalArgumentException("boardSize must be greater than zero");
+            throw new IllegalArgumentException("[ERROR] boardSize must be greater than zero");
         }
 
         GamePanel board = mainFrame.getGamePanel();
         if (board.getBoardSize() != boardSize) {
             throw new IllegalStateException(
-                "Configured boardSize " + boardSize + " does not match the "
+                "[ERROR] Configured boardSize " + boardSize + " does not match the "
                 + board.getBoardSize() + " playable tiles"
             );
         }
         for (int pos = 0; pos < boardSize; pos++) {
             if (board.getTileByPos(pos) == null) {
-                throw new IllegalStateException("The board is missing tile position " + pos);
+                throw new IllegalStateException("[ERROR] The board is missing tile position " + pos);
             }
         }
     }
@@ -239,9 +239,9 @@ public class Main {
                 for (Path changedFile : changedFiles) {
                     try {
                         globals.loadfile(luaDirectory.resolve(changedFile).toString()).call();
-                        System.out.println("Reloaded Lua script: " + changedFile);
+                        System.out.println("[LOG] Reloaded Lua script: " + changedFile);
                     } catch (RuntimeException exception) {
-                        System.err.println("Could not reload Lua script " + changedFile);
+                        System.err.println("[ERROR] Could not reload Lua script " + changedFile);
                         exception.printStackTrace();
                     }
                 }
@@ -277,7 +277,7 @@ public class Main {
             sum += d.roll();
         }
 
-        System.out.println("Rolled " + dice.size() + " dice with the result: " + sum);
+        System.out.println("[LOG] Rolled " + dice.size() + " dice with the result: " + sum);
 
         return sum;
     }

@@ -8,16 +8,18 @@ public class Player {
     private final ImagePanel IMAGE_CONTAINER;
     private final Color PLAYER_COLOR;
 
+    private String name = "Player";
     private int money = 0;
     private int pos = 0;
     
-    public Player(String imageFileName, Color c) {
+    public Player(String name, String imageFileName, Color c) {
         PLAYER_COLOR = c;
+        this.name = name;
 
         var imageURL = getClass().getResource("/images/" + imageFileName);
         if (imageURL == null) {
             throw new IllegalArgumentException(
-                "Could not find image: " + imageFileName
+                "[ERROR] Could not find image: " + imageFileName
             );
         }
         ImageIcon icon = new ImageIcon(imageURL);
@@ -28,7 +30,7 @@ public class Player {
     public void reduceMoney(int amountReduced) {
         this.money -= amountReduced;
 
-        System.out.println("A player received/had to pay money - current money: " + money);
+        System.out.println("[LOG] " + name + " received/had to pay money - current money: " + money);
     }
 
     public void buy() {
@@ -42,12 +44,12 @@ public class Player {
 
     public void move(int n) {
         if (n < 0) {
-            throw new IllegalArgumentException("Movement steps must not be negative: " + n);
+            throw new IllegalArgumentException("[ERROR] Movement steps must not be negative: " + n);
         }
 
         int boardSize = Main.getBoardSize();
         if (boardSize <= 0) {
-            throw new IllegalStateException("Cannot move on a board with no positions");
+            throw new IllegalStateException("[ERROR] Cannot move on a board with no positions");
         }
 
         for (int step = 0; step < n; step++) {
@@ -62,7 +64,7 @@ public class Player {
                 BoardTile targetTile = Main.getTileByPos(newPos);
                 if (currentTile == null || targetTile == null) {
                     throw new IllegalStateException(
-                        "Cannot move from board position " + oldPos + " to " + newPos
+                        "[ERROR] Cannot move from board position " + oldPos + " to " + newPos
                         + ": a tile is missing"
                     );
                 }
@@ -70,7 +72,7 @@ public class Player {
                 currentTile.onLeave(this);
                 pos = newPos;
                 targetTile.onEnter(this);
-                System.out.println("Player moved from position " + oldPos + " to " + newPos);
+                System.out.println("[LOG] " + name + " moved from position " + oldPos + " to " + newPos);
             });
         }
     }
@@ -84,7 +86,7 @@ public class Player {
             Thread.sleep(250);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("Player movement was interrupted", exception);
+            throw new IllegalStateException("[ERROR] Player movement was interrupted", exception);
         }
     }
 
@@ -98,7 +100,7 @@ public class Player {
             SwingUtilities.invokeAndWait(action);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("Player movement was interrupted", exception);
+            throw new IllegalStateException("[ERROR] Player movement was interrupted", exception);
         } catch (java.lang.reflect.InvocationTargetException exception) {
             Throwable cause = exception.getCause();
             if (cause instanceof RuntimeException runtimeException) {
@@ -153,6 +155,7 @@ public class Player {
 
     public void setPos(int pos) {this.pos = pos;}
 
+    public String getName() {return name;}
     public Color getColor() {return this.PLAYER_COLOR;}
     public int getPos() {return pos;}
     public int getMoney() {return money;}

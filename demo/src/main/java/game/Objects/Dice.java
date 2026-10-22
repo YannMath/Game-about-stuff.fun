@@ -10,7 +10,7 @@ public class Dice {
     public Dice(int min, int max) {
         if (min < 1 || max < min) {
             throw new IllegalArgumentException(
-                "Dice range must satisfy 1 <= min <= max; received " + min + ".." + max
+                "[ERROR] Dice range must satisfy 1 <= min <= max; received " + min + ".." + max
             );
         }
         this.min = min;
@@ -28,7 +28,7 @@ public class Dice {
     public static int randomInt(int min, int max) {
         if (max < min) {
             throw new IllegalArgumentException(
-                "Random range must satisfy min <= max; received " + min + ".." + max
+                "[ERROR] Random range must satisfy min <= max; received " + min + ".." + max
             );
         }
         return RANDOM.nextInt(max - min + 1) + min;
@@ -36,7 +36,7 @@ public class Dice {
 
     public static int randomInt(int max) {
         if (max < 0) {
-            throw new IllegalArgumentException("Random bound must not be negative: " + max);
+            throw new IllegalArgumentException("[ERROR] Random bound must not be negative: " + max);
         }
         return RANDOM.nextInt(max + 1);
     }

@@ -1,0 +1,88 @@
+Date : 2026-10-22 18:13:02
+Directory : f:\Swing\Text_based_game.fun
+Total : 38 files,  1708 codes, 4 comments, 205 blanks, all 1917 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         29 |      1,426 |          0 |        164 |      1,590 |
+| Lua      |          8 |        248 |          4 |         36 |        288 |
+| XML      |          1 |         34 |          0 |          5 |         39 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                     | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                        |         38 |      1,708 |          4 |        205 |      1,917 |
+| demo                                                                                     |         38 |      1,708 |          4 |        205 |      1,917 |
+| demo (Files)                                                                             |          1 |         34 |          0 |          5 |         39 |
+| demo\src                                                                                 |         17 |        946 |          2 |        176 |      1,124 |
+| demo\src\main                                                                            |         17 |        946 |          2 |        176 |      1,124 |
+| demo\src\main\java                                                                       |         13 |        822 |          0 |        158 |        980 |
+| demo\src\main\java\game                                                                  |         13 |        822 |          0 |        158 |        980 |
+| demo\src\main\java\game (Files)                                                          |          1 |        252 |          0 |         35 |        287 |
+| demo\src\main\java\game\Logic                                                            |          3 |         75 |          0 |         15 |         90 |
+| demo\src\main\java\game\Logic (Files)                                                    |          2 |         68 |          0 |         12 |         80 |
+| demo\src\main\java\game\Logic\Factories                                                  |          1 |          7 |          0 |          3 |         10 |
+| demo\src\main\java\game\Objects                                                          |          5 |        350 |          0 |         74 |        424 |
+| demo\src\main\java\game\UI                                                               |          4 |        145 |          0 |         34 |        179 |
+| demo\src\main\resources                                                                  |          4 |        124 |          2 |         18 |        144 |
+| demo\src\main\resources\lua                                                              |          4 |        124 |          2 |         18 |        144 |
+| demo\target                                                                              |         20 |        728 |          2 |         24 |        754 |
+| demo\target\classes                                                                      |         20 |        728 |          2 |         24 |        754 |
+| demo\target\classes\game                                                                 |         16 |        604 |          0 |          6 |        610 |
+| demo\target\classes\game (Files)                                                         |          2 |        145 |          0 |          0 |        145 |
+| demo\target\classes\game\Logic                                                           |          3 |         82 |          0 |          0 |         82 |
+| demo\target\classes\game\Logic (Files)                                                   |          2 |         67 |          0 |          0 |         67 |
+| demo\target\classes\game\Logic\Factories                                                 |          1 |         15 |          0 |          0 |         15 |
+| demo\target\classes\game\Objects                                                         |          7 |        272 |          0 |          0 |        272 |
+| demo\target\classes\game\UI                                                              |          4 |        105 |          0 |          6 |        111 |
+| demo\target\classes\lua                                                                  |          4 |        124 |          2 |         18 |        144 |
++------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                 | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| f:\Swing\Text_based_game.fun\demo\pom.xml                                                | XML      |         34 |          0 |          5 |         39 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Logic\Convert.java                  | Java     |         58 |          0 |         10 |         68 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Logic\Factories\TileFactory.java    | Java     |          7 |          0 |          3 |         10 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Logic\Turn.java                     | Java     |         10 |          0 |          2 |         12 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Main.java                           | Java     |        252 |          0 |         35 |        287 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\BoardTile.java              | Java     |        145 |          0 |         26 |        171 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Dice.java                   | Java     |         36 |          0 |          8 |         44 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\DisplayTile.java            | Java     |         15 |          0 |          7 |         22 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Player.java                 | Java     |        136 |          0 |         28 |        164 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Tile.java                   | Java     |         18 |          0 |          5 |         23 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\UI\GamePanel.java                   | Java     |        111 |          0 |         20 |        131 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\UI\MainFrame.java                   | Java     |         11 |          0 |          5 |         16 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\UI\MainPanel.java                   | Java     |         17 |          0 |          5 |         22 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\UI\MenuPanel.java                   | Java     |          6 |          0 |          4 |         10 |
+| f:\Swing\Text_based_game.fun\demo\src\main\resources\lua\config_boardSetup.lua           | Lua      |         76 |          0 |          9 |         85 |
+| f:\Swing\Text_based_game.fun\demo\src\main\resources\lua\config_player.lua               | Lua      |         34 |          1 |          7 |         42 |
+| f:\Swing\Text_based_game.fun\demo\src\main\resources\lua\config_setup.lua                | Lua      |         12 |          1 |          2 |         15 |
+| f:\Swing\Text_based_game.fun\demo\src\main\resources\lua\testForLua.lua                  | Lua      |          2 |          0 |          0 |          2 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Logic\Convert.class                | Java     |         55 |          0 |          0 |         55 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Logic\Factories\TileFactory.class  | Java     |         15 |          0 |          0 |         15 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Logic\Turn.class                   | Java     |         12 |          0 |          0 |         12 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Main$1.class                       | Java     |         11 |          0 |          0 |         11 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Main.class                         | Java     |        134 |          0 |          0 |        134 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\BoardTile$ImagePanel.class | Java     |         34 |          0 |          0 |         34 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\BoardTile.class            | Java     |         91 |          0 |          0 |         91 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Dice.class                 | Java     |         18 |          0 |          0 |         18 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\DisplayTile.class          | Java     |         14 |          0 |          0 |         14 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Player$ImagePanel.class    | Java     |         32 |          0 |          0 |         32 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Player.class               | Java     |         65 |          0 |          0 |         65 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Tile.class                 | Java     |         18 |          0 |          0 |         18 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\UI\GamePanel.class                 | Java     |         77 |          0 |          5 |         82 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\UI\MainFrame.class                 | Java     |         10 |          0 |          0 |         10 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\UI\MainPanel.class                 | Java     |         12 |          0 |          1 |         13 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\UI\MenuPanel.class                 | Java     |          6 |          0 |          0 |          6 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\lua\config_boardSetup.lua               | Lua      |         76 |          0 |          9 |         85 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\lua\config_player.lua                   | Lua      |         34 |          1 |          7 |         42 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\lua\config_setup.lua                    | Lua      |         12 |          1 |          2 |         15 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\lua\testForLua.lua                      | Lua      |          2 |          0 |          0 |          2 |
+| Total                                                                                    |          |      1,708 |          4 |        205 |      1,917 |
++------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

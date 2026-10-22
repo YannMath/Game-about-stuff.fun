@@ -4,8 +4,8 @@
 ]]
 
 setup = {
-    amountOfPlayers = 3,
-    startMoney = 1800,
+    amountOfExtraPlayers = 0, --These are players that are not initialized in the config_player.lua file and are usually 0
+    startMoney = 2000,
     randomStartPos = false,
     aiActive = false,
     dice = {6, 6},
