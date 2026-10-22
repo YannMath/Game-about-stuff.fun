@@ -4,7 +4,7 @@
 ]]
 
 setup = {
-    amountOfPlayers = 1,
+    amountOfPlayers = 2,
     startMoney = 1800,
     randomStartPos = false,
     aiActive = false,

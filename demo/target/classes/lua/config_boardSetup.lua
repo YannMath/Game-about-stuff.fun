@@ -13,7 +13,7 @@ local function createBlumenstrasse(name, boardPos)
     return {
         pos = boardPos,
         text = name,
-        price = 0,
+        price = 100,
         imageLink = "blumenstrasse.png",
         onEnter = function(player)
             print(tostring(player) .. " entered the tile " .. name)

@@ -19,7 +19,7 @@ public class Tile extends JLayeredPane {
     private final JPanel CHARACTER_LAYER = new JPanel(null);
 
     private String locationName;
-    private int price = 0;
+    private int price;
     private Player owner;
     private Player currentPlayerOnTile;
     private LuaValue onEnterFunc;

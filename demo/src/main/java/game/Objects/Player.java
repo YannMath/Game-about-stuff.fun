@@ -2,6 +2,8 @@ package game.Objects;
 
 import java.awt.*;
 import javax.swing.*;
+
+import game.Main;
 public class Player {
     private final ImagePanel IMAGE_CONTAINER;
 
@@ -23,6 +25,18 @@ public class Player {
         this.money -= amountReduced;
 
         System.out.println("A player received/had to pay money - current money: " + money);
+    }
+
+    public void move(int n) {
+        int newPos = (pos + n) % Main.getBoardSize();
+        System.out.println("Player is now at position: " + newPos);
+        System.out.println("Old position: " + pos);
+        Tile currentTile = Main.getTileByPos(pos);
+        Tile targetTile = Main.getTileByPos(newPos);
+        this.pos = newPos;
+
+        currentTile.onLeave(this);
+        targetTile.onEnter(this);
     }
 
     public JComponent getImageComponent() {

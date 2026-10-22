@@ -26,6 +26,7 @@ import org.luaj.vm2.LuaValue;
 import game.Logic.Factories.TileFactory;
 import game.Logic.Turn;
 import game.UI.MainFrame;
+import game.UI.GamePanel;
 import game.Objects.Player;
 import game.Objects.Dice;
 import game.Objects.Tile;
@@ -41,6 +42,7 @@ public class Main {
     private static Player currentPlayer;
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
+    private static int boardSize = 8;
     
     public static void main(String[] args) throws Exception {
         FlatDarkLaf.setup();
@@ -108,6 +110,9 @@ public class Main {
                     System.out.println("Created new D-" + max);
                 }
             }
+            if (!setup.get("boardSize").isnil()) {
+                boardSize = setup.get("boardSize").toint();
+            }
         } else {
             throw new IllegalArgumentException(
                 "The config_setup.lua file is either not present or is not correct"
@@ -121,6 +126,12 @@ public class Main {
         int index = 0;
 
         while (running) {
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                System.out.println("Something went wrong when pausing the game loop");
+                Thread.currentThread().interrupt();
+            }
             index++;
             index %= amountOfPlayers; 
 
@@ -210,13 +221,22 @@ public class Main {
         return key.reset();
     }
 
+    public static Tile getTileByPos(int pos) {
+        GamePanel board = mainFrame.getGamePanel();
+        return board.getTileByPos(pos);
+    }
+
     public static int rollDice() {
         int sum = 0;
         for (Dice d : dice) {
             sum += d.roll();
         }
+
+        System.out.println("Rolled " + dice.size() + " dice with the result: " + sum);
+
         return sum;
     }
 
     public Player getCurrentPlayer() {return currentPlayer;}
+    public static int getBoardSize() {return boardSize;}
 }
