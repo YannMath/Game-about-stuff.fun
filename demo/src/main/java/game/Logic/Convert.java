@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.Map;
 import org.luaj.vm2.LuaValue;
 import game.Objects.BoardTile;
+import game.Objects.DisplayTile;
 import game.Objects.Player;
 
 public class Convert {
@@ -14,14 +15,25 @@ public class Convert {
         Color.GREEN, "default_player_green.png"
     );
 
-    public static BoardTile parseTileLuaToJava(LuaValue luaTile) {
+    public static BoardTile parseBoardTileLuaToJava(LuaValue luaTile) {
         String text = luaTile.get("text").tojstring();
         int price = luaTile.get("price").toint();
         String imageLink = luaTile.get("imageLink").tojstring();
         int pos = luaTile.get("pos").toint();
+        boolean buyable = luaTile.get("buyable").toboolean();
 
-        BoardTile returnTile = new BoardTile(text, price, imageLink, pos);
+        if (luaTile.get("buyable").isnil()) buyable = true;
+        BoardTile returnTile = new BoardTile(text, price, imageLink, pos, buyable);
         returnTile.setOnEnter(luaTile.get("onEnter"));
+
+        return returnTile;
+    }
+
+    public static DisplayTile parseDisplayTileLuaToJava(LuaValue luaTile) {
+        String text = luaTile.get("buttonText").tojstring();
+        
+        DisplayTile returnTile = new DisplayTile(text);
+        returnTile.setInteraction(luaTile.get("interaction"));
 
         return returnTile;
     }

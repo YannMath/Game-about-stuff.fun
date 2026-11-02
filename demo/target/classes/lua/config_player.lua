@@ -1,7 +1,7 @@
 --[[ 
     This is a setup file. Be careful when editing it!!!
     This file MUST return an array of Lua dictionary style tables with the player profiles!
-    Currently only the colors Cyan, Magenta, Orange and Green are 
+    Currently only the colors Cyan, Magenta, Orange and Green are supported by the auto image link
 ]]
 
 local players = {}
@@ -14,7 +14,7 @@ local player1 = {
 }
 
 local player2 = {
-    name = "Blobby",
+    name = "Blobby is a free blob",
     spriteColor = color.ORANGE,
     imageLink = "",
     autoImageLink = true

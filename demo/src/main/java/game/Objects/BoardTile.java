@@ -19,13 +19,14 @@ public class BoardTile extends Tile {
     private final JLabel PRICE_CONTAINER;
 
     private String locationName;
+    private boolean isBuyable;
     private int price;
     private Player owner;
     private final List<Player> playersOnTile = new ArrayList<>();
     private LuaValue onEnterFunc;
     private int pos;
 
-    public BoardTile(String name, int price, String imageFileName, int pos) {
+    public BoardTile(String name, int price, String imageFileName, int pos, boolean buyable) {
         var imageURL = getClass().getResource("/images/" + imageFileName);
         if (imageURL == null) {
             throw new IllegalArgumentException(
@@ -36,6 +37,7 @@ public class BoardTile extends Tile {
         this.locationName = name;
         this.price = price;
         this.pos = pos;
+        this.isBuyable = buyable;
 
         setPreferredSize(new Dimension(160, 160));
         setMinimumSize(new Dimension(100, 100));
@@ -57,6 +59,10 @@ public class BoardTile extends Tile {
         add(TOP_LAYER, JLayeredPane.PALETTE_LAYER);
     }
 
+    public BoardTile(String name, int price, String imageFileName, int pos) {
+        this(name, price, imageFileName, pos, true);
+    }
+
     @Override
     public void doLayout() {
         super.doLayout();
@@ -69,12 +75,7 @@ public class BoardTile extends Tile {
 
         IMAGE_CONTAINER.setBounds(0, 0, width, imageHeight);
         NAME_CONTAINER.setBounds(0, imageHeight, width, nameHeight);
-        PRICE_CONTAINER.setBounds(
-            0,
-            imageHeight + nameHeight,
-            width,
-            height - imageHeight - nameHeight
-        );
+        PRICE_CONTAINER.setBounds(0,imageHeight + nameHeight,width,height - imageHeight - nameHeight);
 
         int playerWidth = playersOnTile.isEmpty() ? 0 : width / playersOnTile.size();
         for (int index = 0; index < playersOnTile.size(); index++) {
@@ -122,8 +123,9 @@ public class BoardTile extends Tile {
         }
     }
 
-    public void buy(Player player) {    // TODO: Add the LuaValue buyable so that they cannot buy the start tile anymore, duh!
+    public void buy(Player player) {  
         if (isOwned()) {System.out.println("[NON PROGRAM ERROR] Tile is already owned"); return;}
+        if (!isBuyable) {System.out.println("[NON PROGRAM ERROR] Tile is not buyable"); return;}
         if (player.getMoney() < price) {System.out.println("[NON PROGRAM ERROR] You don't have enough money to buy this property"); return;}
         owner = player;
         player.reduceMoney(price);
@@ -165,6 +167,7 @@ public class BoardTile extends Tile {
     }
 
     public boolean isOwned() {return owner != null;}
+    public boolean isBuyable() {return isBuyable;}
     public Player getOwner() {return owner;}
     public String getName() {return locationName;}
     public int getPos() {return pos;}

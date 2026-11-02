@@ -26,17 +26,32 @@ local startTile = {
     text = "Start",
     price = 0,
     imageLink = "start.jpeg",
+    buyable = false,
     onEnter = function(player)
         player:reduceMoney(-200)
         print("[LOG] " .. tostring(player:getName()) .. " received 200$ when crossing the start tile")
     end
 }
 
+local techUniEntTile = {
+    pos = 8,
+    text = "Technische Universität Entenhausen",
+    price = 800,
+    imageLink = "technische_uni_ent.png",
+    onEnter = function(player)
+        print("[LOG] Function not implemented yet") 
+    end
+}
+
 local diceTile = {
-    text = "Roll all dice",
-    interaction = function(player, game)
-        rollAllDice()
-        text = roll
+    isDisplay = true;
+    buttonText = "Roll all dice",
+    interaction = function(player)
+        local roll = rollAllDice()
+        player:move(roll)
+        player:buy()
+        nextPlayer()
+        return "Rolled " .. tostring(roll)
     end
 }
 
@@ -47,7 +62,6 @@ local blumenstrasse4 = createBlumenstrasse("Blumenstrasse", 4)
 local blumenstrasse5 = createBlumenstrasse("Blumenstrasse", 5)
 local blumenstrasse6 = createBlumenstrasse("Blumenstrasse", 6)
 local blumenstrasse7 = createBlumenstrasse("Blumenstrasse", 7)
-local blumenstrasse8 = createBlumenstrasse("Blumenstrasse", 8)
 local blumenstrasse9 = createBlumenstrasse("Blumenstrasse", 9)
 local blumenstrasse10= createBlumenstrasse("Blumenstrasse", 10)
 local blumenstrasse11= createBlumenstrasse("Blumenstrasse", 11)
@@ -73,7 +87,7 @@ boardLayout[5][1] = blumenstrasse4
 boardLayout[4][1] = blumenstrasse5
 boardLayout[3][1] = blumenstrasse6
 boardLayout[2][1] = blumenstrasse7
-boardLayout[1][1] = blumenstrasse8
+boardLayout[1][1] = techUniEntTile
 boardLayout[1][2] = blumenstrasse9
 boardLayout[1][3] = blumenstrasse10
 boardLayout[1][4] = blumenstrasse11
@@ -81,5 +95,7 @@ boardLayout[1][5] = blumenstrasse12
 boardLayout[2][5] = blumenstrasse13
 boardLayout[3][5] = blumenstrasse14
 boardLayout[4][5] = blumenstrasse15
+
+boardLayout[3][3] = diceTile
 
 board:loadBoard(boardLayout)

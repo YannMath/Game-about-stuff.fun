@@ -28,7 +28,6 @@ import org.luaj.vm2.LuaValue;
 
 import game.Logic.Factories.TileFactory;
 import game.Logic.Convert;
-import game.Logic.Turn;
 import game.UI.MainFrame;
 import game.UI.GamePanel;
 import game.Objects.Player;
@@ -40,10 +39,10 @@ public class Main {
 
     private static Path luaDirectory;
     private static Globals globals;
-    private static boolean running = false;
     private static List<Player> players = new ArrayList<>();
     private static List<Dice> dice = new ArrayList<>();
     private static Player currentPlayer;
+    private static int index = 0;
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
     private static int boardSize = -1;
@@ -77,6 +76,13 @@ public class Main {
                     return LuaValue.valueOf(rollDice());
                 }
             });
+            globals.set("nextPlayer", new ZeroArgFunction() {
+                @Override 
+                public LuaValue call() {
+                    incrementPlayer();
+                    return NIL;
+                }
+            });
             loadLuaFile("config_boardSetup");
             setup();
             mainFrame.pack();
@@ -84,7 +90,6 @@ public class Main {
             mainFrame.setVisible(true);
         });
         startLuaWatcher(watcher);
-        gameLoop();
     }
 
     private static void setup() {
@@ -111,7 +116,6 @@ public class Main {
                 startMoney = gameSetup.get("startMoney").toint();
                 for (Player p : players) {
                     p.reduceMoney(-startMoney);
-                    
                 }
             }
             if (!gameSetup.get("dice").isnil()) {
@@ -148,25 +152,9 @@ public class Main {
         }
     }
 
-    private static void gameLoop() {
-        running = true;
-        int index = 0;
-
-        while (running) {
-            try {
-                Thread.sleep(1500);
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                return;
-            }
-
-            if (players.isEmpty()) {
-                throw new IllegalStateException("[ERROR] There are no players in the players list");
-            }
-
-            Turn.doTurn(players.get(index));
-            index = (index + 1) % players.size();
-        }
+    private static void incrementPlayer() {
+        index = (index + 1) % players.size();
+        currentPlayer = players.get(index);
     }
 
     private static void validateBoard() {
@@ -282,6 +270,6 @@ public class Main {
         return sum;
     }
 
-    public Player getCurrentPlayer() {return currentPlayer;}
+    public static Player getCurrentPlayer() {return currentPlayer;}
     public static int getBoardSize() {return boardSize;}
 }

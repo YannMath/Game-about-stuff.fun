@@ -6,6 +6,8 @@ import org.luaj.vm2.LuaValue;
 
 import game.Logic.Convert;
 import game.Objects.BoardTile;
+import game.Objects.DisplayTile;
+import game.Objects.Tile;
 
 public class GamePanel extends JPanel {
     private final JPanel BOARD_PANEL = new JPanel();
@@ -60,11 +62,14 @@ public class GamePanel extends JPanel {
 
                 for (int x = 1; x <= row.length(); x++) {
                     LuaValue tileValue = row.get(x);
-                    BoardTile currentTile;
+                    Tile currentTile;
                     if (tileValue.istable()) {
-                        currentTile = Convert.parseTileLuaToJava(tileValue);
-                    } else if (tileValue.isuserdata(BoardTile.class)) {
-                        currentTile = BoardTile.class.cast(tileValue.checkuserdata(BoardTile.class));
+                        if (tileValue.get("isDisplay").toboolean() == true)
+                            currentTile = Convert.parseDisplayTileLuaToJava(tileValue);
+                        else 
+                            currentTile = Convert.parseBoardTileLuaToJava(tileValue);
+                    } else if (tileValue.isuserdata(Tile.class)) {
+                        currentTile = Tile.class.cast(tileValue.checkuserdata(Tile.class));
                     } else {
                         throw new IllegalArgumentException(
                             "[ERROR] Expected a Lua table or Tile userdata at (" + x + ", " + y
@@ -72,7 +77,12 @@ public class GamePanel extends JPanel {
                         );
                     }
 
-                    if (!currentTile.getName().equals("EMPTY")) {
+                    if (currentTile instanceof BoardTile && !currentTile.getName().equals("EMPTY")) {
+                        gbc.gridx = x - 1;
+                        gbc.gridy = y - 1;
+                        BOARD_PANEL.add(currentTile, gbc);
+                    }
+                    else if (currentTile instanceof DisplayTile) {
                         gbc.gridx = x - 1;
                         gbc.gridy = y - 1;
                         BOARD_PANEL.add(currentTile, gbc);
