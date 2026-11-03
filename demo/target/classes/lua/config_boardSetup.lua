@@ -46,12 +46,12 @@ local techUniEntTile = {
 local diceTile = {
     isDisplay = true;
     buttonText = "Roll all dice",
-    interaction = function(player)
+    interaction = function(player, tile)
         local roll = rollAllDice()
         player:move(roll)
         player:buy()
         nextPlayer()
-        return "Rolled " .. tostring(roll)
+        tile:setText("Rolled " .. tostring(roll))
     end
 }
 

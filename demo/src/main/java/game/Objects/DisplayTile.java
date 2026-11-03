@@ -46,10 +46,7 @@ public class DisplayTile extends Tile {
     @Override
     public void interact(Player p) {
         if (interactionFunc != null && !interactionFunc.isnil()) {
-            LuaValue result = interactionFunc.call(CoerceJavaToLua.coerce(p));
-            if (result.isstring()) {
-                setText(result.tojstring());
-            }
+            interactionFunc.call(CoerceJavaToLua.coerce(p), CoerceJavaToLua.coerce(this));
         }
     }
 

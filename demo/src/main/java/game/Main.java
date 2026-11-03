@@ -41,7 +41,6 @@ public class Main {
     private static Globals globals;
     private static List<Player> players = new ArrayList<>();
     private static List<Dice> dice = new ArrayList<>();
-    private static Player currentPlayer;
     private static int index = 0;
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
@@ -141,6 +140,10 @@ public class Main {
             );
         }
 
+        if (players.isEmpty()) {
+            throw new IllegalStateException("[ERROR] At least one player must be configured");
+        }
+
         BoardTile startTile = mainFrame.getGamePanel().getTileByPos(0);
         if (startTile == null) {
             throw new IllegalStateException("[ERROR] The board does not contain a start tile at position 0");
@@ -154,7 +157,6 @@ public class Main {
 
     private static void incrementPlayer() {
         index = (index + 1) % players.size();
-        currentPlayer = players.get(index);
     }
 
     private static void validateBoard() {
@@ -270,6 +272,12 @@ public class Main {
         return sum;
     }
 
-    public static Player getCurrentPlayer() {return currentPlayer;}
+    public static Player getCurrentPlayer() {
+        if (players.isEmpty()) {
+            System.out.println("[ERROR No current players");
+            throw new IllegalStateException("[ERROR] Cannot get the current player before players are configured");
+        }
+        return players.get(index);
+    }
     public static int getBoardSize() {return boardSize;}
 }
