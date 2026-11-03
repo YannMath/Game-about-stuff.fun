@@ -1,6 +1,9 @@
 package game.Objects;
 
 import java.awt.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.*;
 
 import game.Main;
@@ -34,17 +37,25 @@ public class Player {
     }
 
     public void buy() {
-        BoardTile targetTile = getCurrentTile();
-        buy(targetTile);
+        runOnEventDispatchThread(() -> {
+            BoardTile targetTile = getCurrentTile();
+            buy(targetTile);
+        });
     }
 
     public void buy(BoardTile t) {
-        t.buy(this);
+        runOnEventDispatchThread(() -> t.buy(this));
     }
 
     public void move(int n) {
         if (n < 0) {
             throw new IllegalArgumentException("[ERROR] Movement steps must not be negative: " + n);
+        }
+        if (n == 0) {
+            return;
+        }
+        if (SwingUtilities.isEventDispatchThread()) {
+            throw new IllegalStateException("[ERROR] Player movement must be started off the event dispatch thread");
         }
 
         int boardSize = Main.getBoardSize();
@@ -52,42 +63,83 @@ public class Player {
             throw new IllegalStateException("[ERROR] Cannot move on a board with no positions");
         }
 
-        for (int step = 0; step < n; step++) {
-            if (step > 0) {
-                pauseBetweenSteps();
+        CountDownLatch movementFinished = new CountDownLatch(1);
+        AtomicReference<Throwable> movementFailure = new AtomicReference<>();
+        AtomicReference<Timer> movementTimer = new AtomicReference<>();
+        AtomicBoolean cancelled = new AtomicBoolean();
+
+        SwingUtilities.invokeLater(() -> {
+            if (cancelled.get()) {
+                movementFinished.countDown();
+                return;
             }
 
-            runOnEventDispatchThread(() -> {
-                int oldPos = pos;
-                int newPos = (oldPos + 1) % boardSize;
-                BoardTile currentTile = Main.getTileByPos(oldPos);
-                BoardTile targetTile = Main.getTileByPos(newPos);
-                if (currentTile == null || targetTile == null) {
-                    throw new IllegalStateException(
-                        "[ERROR] Cannot move from board position " + oldPos + " to " + newPos
-                        + ": a tile is missing"
-                    );
+            int[] remainingSteps = {n};
+            Timer timer = new Timer(250, null);
+            timer.setInitialDelay(0);
+            timer.addActionListener(event -> {
+                try {
+                    moveOneStep(boardSize);
+                    remainingSteps[0]--;
+                    if (remainingSteps[0] == 0) {
+                        timer.stop();
+                        movementFinished.countDown();
+                    }
+                } catch (RuntimeException | Error exception) {
+                    movementFailure.set(exception);
+                    timer.stop();
+                    movementFinished.countDown();
                 }
-
-                currentTile.onLeave(this);
-                pos = newPos;
-                targetTile.onEnter(this);
-                System.out.println("[LOG] " + name + " moved from position " + oldPos + " to " + newPos);
             });
-        }
-    }
-
-    private void pauseBetweenSteps() {
-        if (SwingUtilities.isEventDispatchThread()) {
-            return;
-        }
+            movementTimer.set(timer);
+            if (cancelled.get()) {
+                timer.stop();
+                movementFinished.countDown();
+                return;
+            }
+            timer.start();
+        });
 
         try {
-            Thread.sleep(250);
+            movementFinished.await();
         } catch (InterruptedException exception) {
+            cancelled.set(true);
+            Timer timer = movementTimer.get();
+            if (timer != null) {
+                SwingUtilities.invokeLater(() -> {
+                    timer.stop();
+                    movementFinished.countDown();
+                });
+            }
             Thread.currentThread().interrupt();
             throw new IllegalStateException("[ERROR] Player movement was interrupted", exception);
         }
+
+        Throwable failure = movementFailure.get();
+        if (failure instanceof RuntimeException runtimeException) {
+            throw runtimeException;
+        }
+        if (failure instanceof Error error) {
+            throw error;
+        }
+    }
+
+    private void moveOneStep(int boardSize) {
+        int oldPos = pos;
+        int newPos = (oldPos + 1) % boardSize;
+        BoardTile currentTile = Main.getTileByPos(oldPos);
+        BoardTile targetTile = Main.getTileByPos(newPos);
+        if (currentTile == null || targetTile == null) {
+            throw new IllegalStateException(
+                "[ERROR] Cannot move from board position " + oldPos + " to " + newPos
+                + ": a tile is missing"
+            );
+        }
+
+        currentTile.onLeave(this);
+        pos = newPos;
+        targetTile.onEnter(this);
+        System.out.println("[LOG] " + name + " moved from position " + oldPos + " to " + newPos);
     }
 
     private void runOnEventDispatchThread(Runnable action) {

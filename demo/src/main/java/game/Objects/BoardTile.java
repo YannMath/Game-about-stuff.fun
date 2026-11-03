@@ -148,6 +148,8 @@ public class BoardTile extends Tile {
         doLayout();
         TOP_LAYER.revalidate();
         TOP_LAYER.repaint();
+        revalidate();
+        repaint();
         if (triggerOnEnter && onEnterFunc != null && !onEnterFunc.isnil()) {
             onEnterFunc.call(CoerceJavaToLua.coerce(p));
         }
@@ -159,6 +161,8 @@ public class BoardTile extends Tile {
             doLayout();
             TOP_LAYER.revalidate();
             TOP_LAYER.repaint();
+            revalidate();
+            repaint();
         }
     }
 
