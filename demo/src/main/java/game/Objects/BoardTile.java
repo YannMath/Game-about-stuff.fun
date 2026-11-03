@@ -24,6 +24,7 @@ public class BoardTile extends Tile {
     private Player owner;
     private final List<Player> playersOnTile = new ArrayList<>();
     private LuaValue onEnterFunc;
+    private LuaValue onPassFunc;
     private int pos;
 
     public BoardTile(String name, int price, String imageFileName, int pos, boolean buyable) {
@@ -155,6 +156,21 @@ public class BoardTile extends Tile {
         }
     }
 
+    public void onPass(Player p) {
+        if (!playersOnTile.contains(p)) {
+            playersOnTile.add(p);
+            TOP_LAYER.add(p.getImageComponent());
+        }
+        doLayout();
+        TOP_LAYER.revalidate();
+        TOP_LAYER.repaint();
+        revalidate();
+        repaint();
+        if (onPassFunc != null && !onPassFunc.isnil()) {
+            onPassFunc.call(CoerceJavaToLua.coerce(p));
+        }
+    }
+
     public void onLeave(Player p) {
         if (playersOnTile.remove(p)) {
             TOP_LAYER.remove(p.getImageComponent());
@@ -166,9 +182,8 @@ public class BoardTile extends Tile {
         }
     }
 
-    public void setOnEnter(LuaValue onEnterFunc) {
-        this.onEnterFunc = onEnterFunc;
-    }
+    public void setOnEnter(LuaValue onEnterFunc) {this.onEnterFunc = onEnterFunc;}
+    public void setOnPass(LuaValue onPassFunc) {this.onPassFunc = onPassFunc;}
 
     public boolean isOwned() {return owner != null;}
     public boolean isBuyable() {return isBuyable;}

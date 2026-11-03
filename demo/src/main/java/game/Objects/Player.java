@@ -33,7 +33,7 @@ public class Player {
     public void reduceMoney(int amountReduced) {
         this.money -= amountReduced;
 
-        System.out.println("[LOG] " + name + " received/had to pay money - current money: " + money);
+        System.out.println("[LOG] " + name + " had to pay " + amountReduced + "$ - current money: " + money);
     }
 
     public void buy() {
@@ -138,8 +138,8 @@ public class Player {
 
         currentTile.onLeave(this);
         pos = newPos;
-        targetTile.onEnter(this);
-        System.out.println("[LOG] " + name + " moved from position " + oldPos + " to " + newPos);
+        targetTile.onPass(this);
+        //System.out.println("[LOG] " + name + " moved from position " + oldPos + " to " + newPos);
     }
 
     private void runOnEventDispatchThread(Runnable action) {

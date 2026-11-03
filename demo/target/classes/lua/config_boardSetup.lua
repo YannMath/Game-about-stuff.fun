@@ -17,6 +17,9 @@ local function createBlumenstrasse(name, boardPos)
         imageLink = "blumenstrasse.png",
         onEnter = function(player)
             print("[LOG] " .. tostring(player:getName()) .. " entered the tile " .. name)
+        end,
+        onPass = function(player)
+            --idk
         end
     }
 end
@@ -39,7 +42,11 @@ local techUniEntTile = {
     price = 800,
     imageLink = "technische_uni_ent.png",
     onEnter = function(player)
-        print("[LOG] Function not implemented yet") 
+        --Function not implemented yet
+    end,
+    onPass = function(player)
+        player:reduceMoney(50)
+        print("[LOG] " .. tostring(player:getName()) .. " contributed 50$ to technical research at the TUE")
     end
 }
 
@@ -48,10 +55,10 @@ local diceTile = {
     buttonText = "Roll all dice",
     interaction = function(player, tile)
         local roll = rollAllDice()
+        tile:setText("Rolled " .. tostring(roll))
         player:move(roll)
         player:buy()
         nextPlayer()
-        tile:setText("Rolled " .. tostring(roll))
     end
 }
 

@@ -25,6 +25,7 @@ public class Convert {
         if (luaTile.get("buyable").isnil()) buyable = true;
         BoardTile returnTile = new BoardTile(text, price, imageLink, pos, buyable);
         returnTile.setOnEnter(luaTile.get("onEnter"));
+        returnTile.setOnPass(luaTile.get("onPass"));
 
         return returnTile;
     }
