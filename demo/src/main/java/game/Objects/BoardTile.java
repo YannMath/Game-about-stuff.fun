@@ -13,6 +13,8 @@ import javax.swing.SwingConstants;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import game.Main;
+
 public class BoardTile extends Tile {
     private final ImagePanel IMAGE_CONTAINER;
     private final JLabel NAME_CONTAINER;
@@ -52,7 +54,13 @@ public class BoardTile extends Tile {
         NAME_CONTAINER.setFont(NAME_CONTAINER.getFont().deriveFont(11f));
         TILE_LAYER.add(NAME_CONTAINER);
 
-        PRICE_CONTAINER = new JLabel(Integer.toString(price) + "$", SwingConstants.CENTER);
+        if (Main.getStartTileName() != null && Main.getStartTileName().equals(locationName) && price != 0) {
+            PRICE_CONTAINER = new JLabel("+" + Integer.toString(price) + "$", SwingConstants.CENTER);
+        } else if (Main.getStartTileName() != null && Main.getStartTileName().equals(locationName)) {
+            PRICE_CONTAINER = new JLabel();
+        } else {
+            PRICE_CONTAINER = new JLabel(Integer.toString(price) + "$", SwingConstants.CENTER);
+        }
         PRICE_CONTAINER.setFont(PRICE_CONTAINER.getFont().deriveFont(Font.BOLD, 20f));
         TILE_LAYER.add(PRICE_CONTAINER);
 
@@ -137,7 +145,7 @@ public class BoardTile extends Tile {
         System.out.println("[LOG] " + player.getName() + " bought " + locationName + " for " + price + "$");
     }
 
-    public void onEnter(Player p) {     // TODO: Differentiate between onPass and onEnter
+    public void onEnter(Player p) {     
         onEnter(p, true);
     }
 

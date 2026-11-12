@@ -45,6 +45,7 @@ public class Main {
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
     private static int boardSize = -1;
+    private static String startTileName = null;
     
     public static void main(String[] args) throws Exception {
         FlatDarkLaf.setup();
@@ -82,8 +83,10 @@ public class Main {
                     return NIL;
                 }
             });
-            loadLuaFile("config_boardSetup");
             setup();
+            loadLuaFile("config_boardSetup");
+            placePlayers();
+            validateBoard();
             mainFrame.pack();
             mainFrame.setLocationRelativeTo(null);
             mainFrame.setVisible(true);
@@ -133,7 +136,9 @@ public class Main {
             } else {
                 boardSize = mainFrame.getGamePanel().getBoardSize();
             }
-            validateBoard();
+            if (!gameSetup.get("startTile").isnil()) {
+                startTileName = gameSetup.get("startTile").tojstring();
+            }
         } else {
             throw new IllegalArgumentException(
                 "[ERROR] The config_setup.lua file is either not present or is not correct"
@@ -143,13 +148,20 @@ public class Main {
         if (players.isEmpty()) {
             throw new IllegalStateException("[ERROR] At least one player must be configured");
         }
+    }
 
-        BoardTile startTile = mainFrame.getGamePanel().getTileByPos(0);
+    private static void placePlayers() {
+        BoardTile startTile;
+        if (startTileName == null) {
+            startTile = mainFrame.getGamePanel().getTileByPos(0);
+        } else {
+            startTile = mainFrame.getGamePanel().getTileByName(startTileName);
+        }
         if (startTile == null) {
             throw new IllegalStateException("[ERROR] The board does not contain a start tile at position 0");
         }
         for (Player p : players) {
-            p.setPos(0);
+            p.setPos(startTile.getPos());
             startTile.onEnter(p, false);
             System.out.println("[LOG] Added Player " + p.getName());
         }
@@ -261,6 +273,11 @@ public class Main {
         return board.getTileByPos(pos);
     }
 
+    public static BoardTile getTileByName(String name) {
+        GamePanel board = mainFrame.getGamePanel();
+        return board.getTileByName(name);
+    }
+
     public static int rollDice() {
         int sum = 0;
         for (Dice d : dice) {
@@ -280,4 +297,5 @@ public class Main {
         return players.get(index);
     }
     public static int getBoardSize() {return boardSize;}
+    public static String getStartTileName() {return startTileName;}
 }

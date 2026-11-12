@@ -14,6 +14,21 @@ public class Player {
     private String name = "Player";
     private int money = 0;
     private int pos = 0;
+    private Movement activeMovement;
+
+    private static class Movement {
+        private int remainingSteps;
+        private boolean enterOnCompletion;
+        private final CountDownLatch finished = new CountDownLatch(1);
+        private final AtomicBoolean cancelled = new AtomicBoolean();
+        private final AtomicReference<Throwable> failure = new AtomicReference<>();
+        private volatile Timer timer;
+
+        private Movement(int steps) {
+            remainingSteps = steps;
+            enterOnCompletion = true;
+        }
+    }
     
     public Player(String name, String imageFileName, Color c) {
         PLAYER_COLOR = c;
@@ -63,64 +78,81 @@ public class Player {
             throw new IllegalStateException("[ERROR] Cannot move on a board with no positions");
         }
 
-        CountDownLatch movementFinished = new CountDownLatch(1);
-        AtomicReference<Throwable> movementFailure = new AtomicReference<>();
-        AtomicReference<Timer> movementTimer = new AtomicReference<>();
-        AtomicBoolean cancelled = new AtomicBoolean();
+        Movement movement = new Movement(n);
+        synchronized (this) {
+            if (activeMovement != null) {
+                throw new IllegalStateException("[ERROR] Player is already moving");
+            }
+            activeMovement = movement;
+        }
 
         SwingUtilities.invokeLater(() -> {
-            if (cancelled.get()) {
-                movementFinished.countDown();
+            if (movement.cancelled.get()) {
+                movement.finished.countDown();
                 return;
             }
 
-            int[] remainingSteps = {n};
-            Timer timer = new Timer(250, null);
-            timer.setInitialDelay(0);
-            timer.addActionListener(event -> {
-                try {
-                    moveOneStep(boardSize);
-                    remainingSteps[0]--;
-                    if (remainingSteps[0] == 0) {
-                        timer.stop();
-                        movementFinished.countDown();
-                    }
-                } catch (RuntimeException | Error exception) {
-                    movementFailure.set(exception);
-                    timer.stop();
-                    movementFinished.countDown();
-                }
-            });
-            movementTimer.set(timer);
-            if (cancelled.get()) {
-                timer.stop();
-                movementFinished.countDown();
+            movement.timer = new Timer(250, event -> advanceMovement(movement, boardSize));
+            movement.timer.setInitialDelay(0);
+            if (movement.cancelled.get()) {
+                movement.timer.stop();
+                movement.finished.countDown();
                 return;
             }
-            timer.start();
+            movement.timer.start();
         });
 
         try {
-            movementFinished.await();
+            movement.finished.await();
         } catch (InterruptedException exception) {
-            cancelled.set(true);
-            Timer timer = movementTimer.get();
-            if (timer != null) {
+            movement.cancelled.set(true);
+            if (movement.timer != null) {
                 SwingUtilities.invokeLater(() -> {
-                    timer.stop();
-                    movementFinished.countDown();
+                    movement.timer.stop();
+                    movement.finished.countDown();
                 });
             }
             Thread.currentThread().interrupt();
             throw new IllegalStateException("[ERROR] Player movement was interrupted", exception);
+        } finally {
+            synchronized (this) {
+                if (activeMovement == movement) {
+                    activeMovement = null;
+                }
+            }
         }
 
-        Throwable failure = movementFailure.get();
+        Throwable failure = movement.failure.get();
         if (failure instanceof RuntimeException runtimeException) {
             throw runtimeException;
         }
         if (failure instanceof Error error) {
             throw error;
+        }
+    }
+
+    private void advanceMovement(Movement movement, int boardSize) {
+        try {
+            if (movement.cancelled.get()) {
+                movement.timer.stop();
+                movement.finished.countDown();
+                return;
+            }
+
+            moveOneStep(boardSize);
+            movement.remainingSteps--;
+            if (movement.remainingSteps == 0 && movement.enterOnCompletion) {
+                movement.enterOnCompletion = false;
+                Main.getTileByPos(pos).onEnter(this);
+            }
+            if (movement.remainingSteps == 0) {
+                movement.timer.stop();
+                movement.finished.countDown();
+            }
+        } catch (RuntimeException | Error exception) {
+            movement.failure.set(exception);
+            movement.timer.stop();
+            movement.finished.countDown();
         }
     }
 
@@ -139,7 +171,39 @@ public class Player {
         currentTile.onLeave(this);
         pos = newPos;
         targetTile.onPass(this);
-        //System.out.println("[LOG] " + name + " moved from position " + oldPos + " to " + newPos);
+    }
+
+    public void moveTo(int targetPos) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            throw new IllegalStateException("[ERROR] Destination movement must be requested on the event dispatch thread");
+        }
+
+        int boardSize = Main.getBoardSize();
+        if (targetPos < 0 || targetPos >= boardSize) {
+            throw new IllegalArgumentException("[ERROR] Destination is outside the board: " + targetPos);
+        }
+        if (Main.getTileByPos(targetPos) == null) {
+            throw new IllegalStateException("[ERROR] Cannot move to missing board position " + targetPos);
+        }
+
+        Movement movement;
+        synchronized (this) {
+            movement = activeMovement;
+        }
+        if (movement == null) {
+            throw new IllegalStateException("[ERROR] Destination movement can only be requested during a move");
+        }
+
+        int additionalSteps = Math.floorMod(targetPos - pos, boardSize);
+        if (additionalSteps > 0) {
+            movement.remainingSteps += additionalSteps;
+            movement.enterOnCompletion = false;
+        }
+    }
+
+    public void moveTo(String locationName) {
+        BoardTile targetTile = Main.getTileByName(locationName);
+        moveTo(targetTile.getPos());
     }
 
     private void runOnEventDispatchThread(Runnable action) {

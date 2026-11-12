@@ -129,6 +129,17 @@ public class GamePanel extends JPanel {
         return null;
     }
 
+    public BoardTile getTileByName(String name) {
+        for (Component component : BOARD_PANEL.getComponents()) {
+            if (component instanceof BoardTile tile) {
+                if (tile.getName().equals(name)) {
+                    return tile;
+                }
+            }
+        }
+        return null;
+    }
+
     public int getBoardSize() {
         int tileCount = 0;
         for (Component component : BOARD_PANEL.getComponents()) {

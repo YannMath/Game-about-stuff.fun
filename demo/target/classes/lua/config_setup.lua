@@ -9,7 +9,8 @@ setup = {
     randomStartPos = false,
     aiActive = false,
     dice = {6, 6},
-    boardSize = 16
+    boardSize = 16,
+    startTile = "Start"
 }
 
 return setup
