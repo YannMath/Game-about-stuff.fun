@@ -78,7 +78,7 @@ local busStop1 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
-        player:moveTo(previousStop.pos)
+        player:moveTo(previousStop.pos, 50)
     end
 }
 
@@ -89,7 +89,7 @@ local busStop2 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
-        player:moveTo(previousStop.pos)
+        player:moveTo(previousStop.pos, 50)
     end
 }
 
@@ -100,7 +100,7 @@ local busStop3 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
-        player:moveTo(previousStop.pos)
+        player:moveTo(previousStop.pos, 50)
     end
 }
 
@@ -111,7 +111,7 @@ local busStop4 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
-        player:moveTo(previousStop.pos)
+        player:moveTo(previousStop.pos, 50)
     end
 }
 

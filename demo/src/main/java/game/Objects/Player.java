@@ -17,6 +17,7 @@ public class Player {
     private Movement activeMovement;
 
     private static class Movement {
+        private int ticks;
         private int remainingSteps;
         private boolean enterOnCompletion;
         private final CountDownLatch finished = new CountDownLatch(1);
@@ -24,9 +25,10 @@ public class Player {
         private final AtomicReference<Throwable> failure = new AtomicReference<>();
         private volatile Timer timer;
 
-        private Movement(int steps) {
+        private Movement(int steps, int ticks) {
             remainingSteps = steps;
             enterOnCompletion = true;
+            this.ticks = ticks;
         }
     }
     
@@ -63,6 +65,13 @@ public class Player {
     }
 
     public void move(int n) {
+        move(n, 250);
+    }
+
+    public void move(int n, int ticks) {
+        if (ticks <= 0) {
+            throw new IllegalArgumentException("Ticks must be positive");
+        }
         if (n < 0) {
             throw new IllegalArgumentException("[ERROR] Movement steps must not be negative: " + n);
         }
@@ -78,7 +87,7 @@ public class Player {
             throw new IllegalStateException("[ERROR] Cannot move on a board with no positions");
         }
 
-        Movement movement = new Movement(n);
+        Movement movement = new Movement(n, ticks);
         synchronized (this) {
             if (activeMovement != null) {
                 throw new IllegalStateException("[ERROR] Player is already moving");
@@ -92,7 +101,7 @@ public class Player {
                 return;
             }
 
-            movement.timer = new Timer(250, event -> advanceMovement(movement, boardSize));
+            movement.timer = new Timer(movement.ticks, event -> advanceMovement(movement, boardSize));
             movement.timer.setInitialDelay(0);
             if (movement.cancelled.get()) {
                 movement.timer.stop();
@@ -173,6 +182,30 @@ public class Player {
         targetTile.onPass(this);
     }
 
+    public void moveTo(int targetPos, int ticks) {
+        if (ticks <= 0) {
+            throw new IllegalArgumentException("Ticks must be positive");
+        }
+
+        Movement movement;
+
+        synchronized (this) {
+            movement = activeMovement;
+        }
+        
+        if (movement == null) {
+            throw new IllegalStateException("Player is not moving");
+        }
+        
+        movement.ticks = ticks;
+        
+        if (movement.timer != null) {
+            movement.timer.setDelay(ticks);
+        }
+
+        moveTo(targetPos);
+    }
+
     public void moveTo(int targetPos) {
         if (!SwingUtilities.isEventDispatchThread()) {
             throw new IllegalStateException("[ERROR] Destination movement must be requested on the event dispatch thread");
@@ -204,6 +237,11 @@ public class Player {
     public void moveTo(String locationName) {
         BoardTile targetTile = Main.getTileByName(locationName);
         moveTo(targetTile.getPos());
+    }
+
+    public void moveTo(String locationName, int ticks) {
+        BoardTile targetTile = Main.getTileByName(locationName);
+        moveTo(targetTile.getPos(), ticks);
     }
 
     private void runOnEventDispatchThread(Runnable action) {
