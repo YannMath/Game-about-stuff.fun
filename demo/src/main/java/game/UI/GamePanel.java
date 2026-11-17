@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import org.luaj.vm2.LuaValue;
 
+import game.Main;
 import game.Logic.Convert;
 import game.Objects.BoardTile;
 import game.Objects.DisplayTile;
@@ -38,7 +39,9 @@ public class GamePanel extends JPanel {
             gbc.gridy = posY; 
             gbc.gridx = posX;
 
-            BOARD_PANEL.add(new BoardTile(name, price, imageFileName, pos), gbc);
+            int id = posY * Main.getBoardSize_x() + posX;
+
+            BOARD_PANEL.add(new BoardTile(name, price, imageFileName, pos, id), gbc);
             BOARD_PANEL.revalidate();
             BOARD_PANEL.repaint();
         });
@@ -63,11 +66,12 @@ public class GamePanel extends JPanel {
                 for (int x = 1; x <= row.length(); x++) {
                     LuaValue tileValue = row.get(x);
                     Tile currentTile;
+                    int id = (y - 1) * row.length() + (x - 1);
                     if (tileValue.istable()) {
                         if (tileValue.get("isDisplay").toboolean() == true)
-                            currentTile = Convert.parseDisplayTileLuaToJava(tileValue);
+                            currentTile = Convert.parseDisplayTileLuaToJava(tileValue, id);
                         else 
-                            currentTile = Convert.parseBoardTileLuaToJava(tileValue);
+                            currentTile = Convert.parseBoardTileLuaToJava(tileValue, id);
                     } else if (tileValue.isuserdata(Tile.class)) {
                         currentTile = Tile.class.cast(tileValue.checkuserdata(Tile.class));
                     } else {
@@ -133,6 +137,17 @@ public class GamePanel extends JPanel {
         for (Component component : BOARD_PANEL.getComponents()) {
             if (component instanceof BoardTile tile) {
                 if (tile.getName().equals(name)) {
+                    return tile;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Tile getTileByID(int id) {
+        for (Component component : BOARD_PANEL.getComponents()) {
+            if (component instanceof Tile tile) {
+                if (tile.getID() == id) {
                     return tile;
                 }
             }

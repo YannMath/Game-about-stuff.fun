@@ -21,6 +21,7 @@ import java.util.List;
 import com.formdev.flatlaf.FlatDarkLaf;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
@@ -32,6 +33,7 @@ import game.UI.MainFrame;
 import game.UI.GamePanel;
 import game.Objects.Player;
 import game.Objects.Dice;
+import game.Objects.Tile;
 import game.Objects.BoardTile;
 
 public class Main {
@@ -45,6 +47,8 @@ public class Main {
     private static int amountOfPlayers = 1;
     private static int startMoney = 2000;
     private static int boardSize = -1;
+    private static int boardSize_y = -1;
+    private static int boardSize_x = -1;
     private static String startTileName = null;
     
     public static void main(String[] args) throws Exception {
@@ -81,6 +85,33 @@ public class Main {
                 public LuaValue call() {
                     incrementPlayer();
                     return NIL;
+                }
+            });
+            globals.set("getAllPlayers", new ZeroArgFunction() {
+                @Override 
+                public LuaValue call() {
+                    return CoerceJavaToLua.coerce(players);
+                }
+            });
+            globals.set("getTileByID", new OneArgFunction() {
+                @Override 
+                public LuaValue call(LuaValue arg) {
+                    int id = arg.toint();
+                    return CoerceJavaToLua.coerce(getTileByID(id));
+                }
+            });
+            globals.set("getTileByPos", new OneArgFunction() {
+                @Override 
+                public LuaValue call(LuaValue arg) {
+                    int pos = arg.toint();
+                    return CoerceJavaToLua.coerce(getTileByPos(pos));
+                }
+            });
+            globals.set("getTileByName", new OneArgFunction() {
+                @Override 
+                public LuaValue call(LuaValue arg) {
+                    String name = arg.tojstring();
+                    return CoerceJavaToLua.coerce(getTileByName(name));
                 }
             });
             setup();
@@ -136,6 +167,12 @@ public class Main {
             } else {
                 boardSize = mainFrame.getGamePanel().getBoardSize();
             }
+            if (!gameSetup.get("boardSize_y").isnil()) {
+                boardSize_y = gameSetup.get("boardSize_y").toint();
+            } 
+            if (!gameSetup.get("boardSize_x").isnil()) {
+                boardSize_y = gameSetup.get("boardSize_x").toint();
+            }
             if (!gameSetup.get("startTile").isnil()) {
                 startTileName = gameSetup.get("startTile").tojstring();
             }
@@ -165,6 +202,12 @@ public class Main {
             startTile.onEnter(p, false);
             System.out.println("[LOG] Added Player " + p.getName());
         }
+        globals.set("currentPlayer", new ZeroArgFunction() {
+            @Override 
+            public LuaValue call() {
+                return CoerceJavaToLua.coerce(getCurrentPlayer());
+            }
+        });
     }
 
     private static void incrementPlayer() {
@@ -278,6 +321,11 @@ public class Main {
         return board.getTileByName(name);
     }
 
+    public static Tile getTileByID(int id) {
+        GamePanel board = mainFrame.getGamePanel();
+        return board.getTileByID(id);
+    }
+
     public static int rollDice() {
         int sum = 0;
         for (Dice d : dice) {
@@ -297,5 +345,7 @@ public class Main {
         return players.get(index);
     }
     public static int getBoardSize() {return boardSize;}
+    public static int getBoardSize_y() {return boardSize_y;}
+    public static int getBoardSize_x() {return boardSize_x;}
     public static String getStartTileName() {return startTileName;}
 }

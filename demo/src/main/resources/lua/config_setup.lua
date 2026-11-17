@@ -10,6 +10,8 @@ setup = {
     aiActive = false,
     dice = {6, 6},
     boardSize = 16,
+    boardSize_y = 5,
+    boardSize_x = 5,
     startTile = "Start"
 }
 

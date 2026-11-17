@@ -29,7 +29,9 @@ public class BoardTile extends Tile {
     private LuaValue onPassFunc;
     private int pos;
 
-    public BoardTile(String name, int price, String imageFileName, int pos, boolean buyable) {
+    public BoardTile(String name, int price, String imageFileName, int pos, boolean buyable, int id) {
+        super(id);
+        
         var imageURL = getClass().getResource("/images/" + imageFileName);
         if (imageURL == null) {
             throw new IllegalArgumentException(
@@ -68,8 +70,8 @@ public class BoardTile extends Tile {
         add(TOP_LAYER, JLayeredPane.PALETTE_LAYER);
     }
 
-    public BoardTile(String name, int price, String imageFileName, int pos) {
-        this(name, price, imageFileName, pos, true);
+    public BoardTile(String name, int price, String imageFileName, int pos, int id) {
+        this(name, price, imageFileName, pos, true, id);
     }
 
     @Override

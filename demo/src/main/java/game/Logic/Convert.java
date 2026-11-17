@@ -3,6 +3,7 @@ package game.Logic;
 import java.awt.Color;
 import java.util.Map;
 import org.luaj.vm2.LuaValue;
+
 import game.Objects.BoardTile;
 import game.Objects.DisplayTile;
 import game.Objects.Player;
@@ -15,7 +16,7 @@ public class Convert {
         Color.GREEN, "default_player_green.png"
     );
 
-    public static BoardTile parseBoardTileLuaToJava(LuaValue luaTile) {
+    public static BoardTile parseBoardTileLuaToJava(LuaValue luaTile, int id) {   // TODO: Make an id handler class to give new ids out and keep track of all ids
         String text = luaTile.get("text").tojstring();
         int price = luaTile.get("price").toint();
         String imageLink = luaTile.get("imageLink").tojstring();
@@ -23,17 +24,17 @@ public class Convert {
         boolean buyable = luaTile.get("buyable").toboolean();
 
         if (luaTile.get("buyable").isnil()) buyable = true;
-        BoardTile returnTile = new BoardTile(text, price, imageLink, pos, buyable);
+        BoardTile returnTile = new BoardTile(text, price, imageLink, pos, buyable, id);
         returnTile.setOnEnter(luaTile.get("onEnter"));
         returnTile.setOnPass(luaTile.get("onPass"));
 
         return returnTile;
     }
 
-    public static DisplayTile parseDisplayTileLuaToJava(LuaValue luaTile) {
+    public static DisplayTile parseDisplayTileLuaToJava(LuaValue luaTile, int id) {
         String text = luaTile.get("buttonText").tojstring();
         
-        DisplayTile returnTile = new DisplayTile(text);
+        DisplayTile returnTile = new DisplayTile(text, id);
         returnTile.setInteraction(luaTile.get("interaction"));
 
         return returnTile;

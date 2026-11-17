@@ -2,6 +2,7 @@ package game.Objects;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutionException;
@@ -23,11 +24,14 @@ public class DisplayTile extends Tile {
     private final JLabel label = new JLabel("", SwingConstants.CENTER);
     private final AtomicBoolean interactionRunning = new AtomicBoolean();
     
-    public DisplayTile(String txt) {
+    public DisplayTile(String txt, int id) {
+        super(id);
+
         setPreferredSize(new Dimension(160, 160));
         setMinimumSize(new Dimension(100, 100));
         setBorder(new LineBorder(Color.GRAY));
         TOP_LAYER.setOpaque(false);
+        label.setFont(label.getFont().deriveFont(Font.BOLD, 20f));
         TILE_LAYER.add(label);
         add(TILE_LAYER, JLayeredPane.DEFAULT_LAYER);
         add(TOP_LAYER, JLayeredPane.PALETTE_LAYER);
@@ -123,6 +127,10 @@ public class DisplayTile extends Tile {
             }
             throw new IllegalStateException("[ERROR] Could not update display tile", cause);
         }
+    }
+
+    public void setColor(Color color) {
+        runOnEventDispatchThread(() -> TILE_LAYER.setBackground(color.darker()));
     }
 
     public String getText() {return text;}

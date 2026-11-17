@@ -1,0 +1,67 @@
+Date : 2026-11-17 16:48:52
+Directory : f:\Swing\Text_based_game.fun
+Total : 23 files,  714 codes, 6 comments, 63 blanks, all 783 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         19 |        516 |          0 |         39 |        555 |
+| Lua      |          4 |        198 |          6 |         24 |        228 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                | files      | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                   |         23 |        714 |          6 |         63 |        783 |
+| demo                                                                                |         23 |        714 |          6 |         63 |        783 |
+| demo\src                                                                            |          9 |        427 |          3 |         50 |        480 |
+| demo\src\main                                                                       |          9 |        427 |          3 |         50 |        480 |
+| demo\src\main\java                                                                  |          7 |        328 |          0 |         38 |        366 |
+| demo\src\main\java\game                                                             |          7 |        328 |          0 |         38 |        366 |
+| demo\src\main\java\game (Files)                                                     |          1 |         22 |          0 |         -2 |         20 |
+| demo\src\main\java\game\Logic                                                       |          1 |         10 |          0 |          3 |         13 |
+| demo\src\main\java\game\Objects                                                     |          4 |        276 |          0 |         36 |        312 |
+| demo\src\main\java\game\UI                                                          |          1 |         20 |          0 |          1 |         21 |
+| demo\src\main\resources                                                             |          2 |         99 |          3 |         12 |        114 |
+| demo\src\main\resources\lua                                                         |          2 |         99 |          3 |         12 |        114 |
+| demo\target                                                                         |         14 |        287 |          3 |         13 |        303 |
+| demo\target\classes                                                                 |         14 |        287 |          3 |         13 |        303 |
+| demo\target\classes\game                                                            |         12 |        188 |          0 |          1 |        189 |
+| demo\target\classes\game (Files)                                                    |          3 |         29 |          0 |          0 |         29 |
+| demo\target\classes\game\Logic                                                      |          1 |          7 |          0 |          0 |          7 |
+| demo\target\classes\game\Objects                                                    |          7 |        144 |          0 |          1 |        145 |
+| demo\target\classes\game\UI                                                         |          1 |          8 |          0 |          0 |          8 |
+| demo\target\classes\lua                                                             |          2 |         99 |          3 |         12 |        114 |
++-------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                            | language | code       | comment    | blank      | total      |
++-------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Logic\Convert.java             | Java     |         10 |          0 |          3 |         13 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Main.java                      | Java     |         22 |          0 |         -2 |         20 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\BoardTile.java         | Java     |         27 |          0 |          3 |         30 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\DisplayTile.java       | Java     |         99 |          0 |          9 |        108 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Player.java            | Java     |        134 |          0 |         19 |        153 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\Objects\Tile.java              | Java     |         16 |          0 |          5 |         21 |
+| f:\Swing\Text_based_game.fun\demo\src\main\java\game\UI\GamePanel.java              | Java     |         20 |          0 |          1 |         21 |
+| f:\Swing\Text_based_game.fun\demo\src\main\resources\lua\config_boardSetup.lua      | Lua      |         98 |          3 |         12 |        113 |
+| f:\Swing\Text_based_game.fun\demo\src\main\resources\lua\config_setup.lua           | Lua      |          1 |          0 |          0 |          1 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Logic\Convert.class           | Java     |          7 |          0 |          0 |          7 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Main$2.class                  | Java     |         11 |          0 |          0 |         11 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Main$3.class                  | Java     |         10 |          0 |          0 |         10 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Main.class                    | Java     |          8 |          0 |          0 |          8 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\BoardTile.class       | Java     |         -1 |          0 |          0 |         -1 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\DisplayTile$1.class   | Java     |         27 |          0 |          1 |         28 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\DisplayTile.class     | Java     |         47 |          0 |          0 |         47 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Player$Movement.class | Java     |         12 |          0 |          0 |         12 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Player.class          | Java     |         41 |          0 |          0 |         41 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Tile$1.class          | Java     |         14 |          0 |          0 |         14 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\Objects\Tile.class            | Java     |          4 |          0 |          0 |          4 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\game\UI\GamePanel.class            | Java     |          8 |          0 |          0 |          8 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\lua\config_boardSetup.lua          | Lua      |         98 |          3 |         12 |        113 |
+| f:\Swing\Text_based_game.fun\demo\target\classes\lua\config_setup.lua               | Lua      |          1 |          0 |          0 |          1 |
+| Total                                                                               |          |        714 |          6 |         63 |        783 |
++-------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

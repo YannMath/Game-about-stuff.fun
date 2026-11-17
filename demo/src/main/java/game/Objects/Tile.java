@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import game.Main;
 
 public class Tile extends JLayeredPane {
+    public final int ID;
     public final JPanel TILE_LAYER = new JPanel(null);
     public final JPanel TOP_LAYER = new JPanel(null);
     private final MouseListener interactionListener = new MouseAdapter() {
@@ -17,7 +18,8 @@ public class Tile extends JLayeredPane {
         }
     };
 
-    public Tile() {
+    public Tile(int id) {
+        this.ID = id;
         addMouseListener(interactionListener);
     }
 
@@ -40,4 +42,6 @@ public class Tile extends JLayeredPane {
         TILE_LAYER.setBounds(x, y, width, height);
         TOP_LAYER.setBounds(x, y, width, height);
     }
+
+    public int getID() {return ID;}
 }

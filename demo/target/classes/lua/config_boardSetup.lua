@@ -1,6 +1,27 @@
 board:clearBoard()
 
 local busStops = {}
+local overviewTiles = {}
+
+local function update()
+    local players = getAllPlayers()
+
+    for i = 0, math.min(players:size(), 4) - 1 do
+        local player = players:get(i)
+        local overviewTile = getTileByID(overviewTiles[i + 1])
+
+        if player ~= nil and overviewTile ~= nil then
+            overviewTile:setText(player:getMoney() .. "$")
+            overviewTile:setColor(player:getColor())
+        end
+    end
+
+    local nextPlayerTileJava = getTileByID(7)
+
+    if nextPlayerTileJava ~= nil then
+        nextPlayerTileJava:setColor(currentPlayer():getColor())
+    end
+end
 
 local function getIndex(pos, array) 
     for i, arrayTile in ipairs(array) do
@@ -42,6 +63,16 @@ local function createBlumenstrasse(name, boardPos)
         onPass = function(player)
             --idk
         end
+    }
+end
+
+local function createPlayerOverviewTile()
+    return {
+        isDisplay = true,
+        buttonText = "Money not initiated",
+        interaction = function(player, tile)
+            --Do stuff
+        end 
     }
 end
 
@@ -116,14 +147,31 @@ local busStop4 = {
 }
 
 local diceTile = {
-    isDisplay = true;
+    isDisplay = true,
     buttonText = "Roll all dice",
     interaction = function(player, tile)
         local roll = rollAllDice()
         tile:setText("Rolled " .. tostring(roll))
         player:move(roll)
+        update()
+    end
+}
+
+local buyTile = {
+    isDisplay = true,
+    buttonText = "Buy current Tile",
+    interaction = function(player, tile)
         player:buy()
+        update()
+    end
+}
+
+local nextPlayerTile = {
+    isDisplay = true,
+    buttonText = "Next Player",
+    interaction = function(player, tile)
         nextPlayer()
+        update()
     end
 }
 
@@ -142,8 +190,14 @@ local blumenstrasse13= createBlumenstrasse("Blumenstrasse", 13)
 local blumenstrasse14= createBlumenstrasse("Blumenstrasse", 14)
 local blumenstrasse15= createBlumenstrasse("Blumenstrasse", 15)
 
+local player1OverviewTile = createPlayerOverviewTile()
+local player2OverviewTile = createPlayerOverviewTile()
+local player3OverviewTile = createPlayerOverviewTile()
+local player4OverviewTile = createPlayerOverviewTile()
+
 local boardLayout = {}
 busStops = {busStop1, busStop2, busStop3, busStop4}
+overviewTiles = {6, 8, 16, 18} 
 
 for y = 1, 5 do
     boardLayout[y] = {}
@@ -169,6 +223,13 @@ boardLayout[2][5] = blumenstrasse13
 boardLayout[3][5] = busStop4
 boardLayout[4][5] = blumenstrasse15
 
+boardLayout[2][3] = nextPlayerTile
 boardLayout[3][3] = diceTile
+boardLayout[4][3] = buyTile
+
+boardLayout[2][2] = player1OverviewTile
+boardLayout[2][4] = player2OverviewTile
+boardLayout[4][2] = player3OverviewTile
+boardLayout[4][4] = player4OverviewTile
 
 board:loadBoard(boardLayout)
