@@ -83,8 +83,10 @@ local startTile = {
     imageLink = "start.jpeg",
     buyable = false,
     onEnter = function(player)
+        --Nothing here to look at
+    end,
+    onPass = function(player)
         player:reduceMoney(-200)
-        print("[LOG] " .. tostring(player:getName()) .. " received 200$ when crossing the start tile")
     end
 }
 

@@ -208,10 +208,13 @@ public class Main {
                 return CoerceJavaToLua.coerce(getCurrentPlayer());
             }
         });
+        players.get(index).enableMovement();
     }
 
     private static void incrementPlayer() {
+        players.get(index).disableMovement();
         index = (index + 1) % players.size();
+        players.get(index).enableMovement();
     }
 
     private static void validateBoard() {

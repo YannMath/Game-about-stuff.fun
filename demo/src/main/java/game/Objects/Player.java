@@ -11,6 +11,7 @@ public class Player {
     private final ImagePanel IMAGE_CONTAINER;
     private final Color PLAYER_COLOR;
 
+    private boolean movementEnabled = false;
     private String name = "Player";
     private int money = 0;
     private int pos = 0;
@@ -69,6 +70,7 @@ public class Player {
     }
 
     public void move(int n, int ticks) {
+        if (!movementEnabled) return;
         if (ticks <= 0) {
             throw new IllegalArgumentException("Ticks must be positive");
         }
@@ -138,6 +140,7 @@ public class Player {
         if (failure instanceof Error error) {
             throw error;
         }
+        disableMovement();
     }
 
     private void advanceMovement(Movement movement, int boardSize) {
@@ -166,6 +169,7 @@ public class Player {
     }
 
     private void moveOneStep(int boardSize) {
+        if (!movementEnabled) return;
         int oldPos = pos;
         int newPos = (oldPos + 1) % boardSize;
         BoardTile currentTile = Main.getTileByPos(oldPos);
@@ -308,6 +312,8 @@ public class Player {
     }
 
     public void setPos(int pos) {this.pos = pos;}
+    public void disableMovement() {this.movementEnabled = false;}
+    public void enableMovement() {this.movementEnabled = true;}
 
     public String getName() {return name;}
     public Color getColor() {return this.PLAYER_COLOR;}
