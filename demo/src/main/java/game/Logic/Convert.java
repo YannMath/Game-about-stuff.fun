@@ -19,12 +19,13 @@ public class Convert {
     public static BoardTile parseBoardTileLuaToJava(LuaValue luaTile, int id) {   // TODO: Make an id handler class to give new ids out and keep track of all ids
         String text = luaTile.get("text").tojstring();
         int price = luaTile.get("price").toint();
+        int rent = luaTile.get("rent").toint();
         String imageLink = luaTile.get("imageLink").tojstring();
         int pos = luaTile.get("pos").toint();
         boolean buyable = luaTile.get("buyable").toboolean();
 
         if (luaTile.get("buyable").isnil()) buyable = true;
-        BoardTile returnTile = new BoardTile(text, price, imageLink, pos, buyable, id);
+        BoardTile returnTile = new BoardTile(text, price, rent, imageLink, pos, buyable, id);
         returnTile.setOnEnter(luaTile.get("onEnter"));
         returnTile.setOnPass(luaTile.get("onPass"));
 
@@ -32,6 +33,9 @@ public class Convert {
     }
 
     public static DisplayTile parseDisplayTileLuaToJava(LuaValue luaTile, int id) {
+        if (!luaTile.get("buttonText").isstring()) {
+            throw new IllegalArgumentException("[ERROR] The button text is either not a String or not present");
+        }
         String text = luaTile.get("buttonText").tojstring();
         
         DisplayTile returnTile = new DisplayTile(text, id);

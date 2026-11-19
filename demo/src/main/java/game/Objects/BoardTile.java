@@ -19,17 +19,19 @@ public class BoardTile extends Tile {
     private final ImagePanel IMAGE_CONTAINER;
     private final JLabel NAME_CONTAINER;
     private final JLabel PRICE_CONTAINER;
+    private final JLabel RENT_CONTAINER;
 
     private String locationName;
     private boolean isBuyable;
     private int price;
+    private int rent;
     private Player owner;
     private final List<Player> playersOnTile = new ArrayList<>();
     private LuaValue onEnterFunc;
     private LuaValue onPassFunc;
     private int pos;
 
-    public BoardTile(String name, int price, String imageFileName, int pos, boolean buyable, int id) {
+    public BoardTile(String name, int price, int rent, String imageFileName, int pos, boolean buyable, int id) {
         super(id);
         
         var imageURL = getClass().getResource("/images/" + imageFileName);
@@ -41,6 +43,7 @@ public class BoardTile extends Tile {
         ImageIcon icon = new ImageIcon(imageURL);
         this.locationName = name;
         this.price = price;
+        this.rent = rent;
         this.pos = pos;
         this.isBuyable = buyable;
 
@@ -66,12 +69,20 @@ public class BoardTile extends Tile {
         PRICE_CONTAINER.setFont(PRICE_CONTAINER.getFont().deriveFont(Font.BOLD, 20f));
         TILE_LAYER.add(PRICE_CONTAINER);
 
+        if (Main.getStartTileName() != null && Main.getStartTileName().equals(locationName) || rent == 0) {
+            RENT_CONTAINER = new JLabel();
+        } else {
+            RENT_CONTAINER = new JLabel(Integer.toString(rent) + "$", SwingConstants.CENTER);
+        }
+        RENT_CONTAINER.setFont(RENT_CONTAINER.getFont().deriveFont(Font.BOLD, 12f));
+        TILE_LAYER.add(RENT_CONTAINER);
+
         add(TILE_LAYER, JLayeredPane.DEFAULT_LAYER);
         add(TOP_LAYER, JLayeredPane.PALETTE_LAYER);
     }
 
-    public BoardTile(String name, int price, String imageFileName, int pos, int id) {
-        this(name, price, imageFileName, pos, true, id);
+    public BoardTile(String name, int price, int rent, String imageFileName, int pos, int id) {
+        this(name, price, rent, imageFileName, pos, true, id);
     }
 
     @Override
@@ -83,10 +94,13 @@ public class BoardTile extends Tile {
         int height = getHeight() - insets.top - insets.bottom;
         int imageHeight = height / 2;
         int nameHeight = height / 10;
+        int rentHeight = height / 10;
+        int priceHeight = height - imageHeight - nameHeight - rentHeight;
 
         IMAGE_CONTAINER.setBounds(0, 0, width, imageHeight);
         NAME_CONTAINER.setBounds(0, imageHeight, width, nameHeight);
-        PRICE_CONTAINER.setBounds(0,imageHeight + nameHeight,width,height - imageHeight - nameHeight);
+        PRICE_CONTAINER.setBounds(0, imageHeight + nameHeight, width, priceHeight);
+        RENT_CONTAINER.setBounds(0, imageHeight + nameHeight + priceHeight, width, rentHeight);
 
         int playerWidth = playersOnTile.isEmpty() ? 0 : width / playersOnTile.size();
         for (int index = 0; index < playersOnTile.size(); index++) {
@@ -145,6 +159,12 @@ public class BoardTile extends Tile {
         PRICE_CONTAINER.setBackground(player.getColor());
 
         System.out.println("[LOG] " + player.getName() + " bought " + locationName + " for " + price + "$");
+    }
+
+    public void payRent(Player player) {
+        if (!isOwned() || owner == player) return;
+        player.reduceMoney(rent);
+        owner.reduceMoney(-rent);
     }
 
     public void onEnter(Player p) {     

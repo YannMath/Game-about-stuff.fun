@@ -65,6 +65,11 @@ public class Player {
         runOnEventDispatchThread(() -> t.buy(this));
     }
 
+    public void payRent() {
+        BoardTile targetTile = getCurrentTile();
+        targetTile.payRent(this);
+    }
+
     public void move(int n) {
         move(n, 250);
     }
@@ -141,6 +146,7 @@ public class Player {
             throw error;
         }
         disableMovement();
+        payRent();
     }
 
     private void advanceMovement(Movement movement, int boardSize) {

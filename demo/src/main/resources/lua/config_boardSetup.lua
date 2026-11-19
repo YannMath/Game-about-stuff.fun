@@ -46,7 +46,9 @@ local function createEmptySpace()
     return tile:create(
         "EMPTY",
         0,
+        0,
         "blumenstrasse.png",
+        -1,
         -1
     )
 end
@@ -56,6 +58,7 @@ local function createBlumenstrasse(name, boardPos)
         pos = boardPos,
         text = name .. " " .. boardPos,
         price = 100,
+        rent = 15,
         imageLink = "blumenstrasse.png",
         onEnter = function(player)
             print("[LOG] " .. tostring(player:getName()) .. " entered the tile " .. name)
@@ -94,6 +97,7 @@ local techUniEntTile = {
     pos = 8,
     text = "Technische Universität Entenhausen",
     price = 800,
+    rent = 80,
     imageLink = "technische_uni_ent.png",
     onEnter = function(player)
         --Function not implemented yet
@@ -111,7 +115,11 @@ local busStop1 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
+        player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
+        if getTileByPos(2):isOwned() then
+            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+        end
     end
 }
 
@@ -122,7 +130,11 @@ local busStop2 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
+        player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
+        if getTileByPos(2):isOwned() then
+            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+        end
     end
 }
 
@@ -133,7 +145,11 @@ local busStop3 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
+        player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
+        if getTileByPos(2):isOwned() then
+            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+        end
     end
 }
 
@@ -144,7 +160,11 @@ local busStop4 = {
     imageLink = "bus_stop.jpeg",
     onEnter = function(player)
         local previousStop = getPreviousBusStop(player:getPos())
+        player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
+        if getTileByPos(2):isOwned() then
+            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+        end
     end
 }
 

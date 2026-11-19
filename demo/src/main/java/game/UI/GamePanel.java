@@ -34,14 +34,14 @@ public class GamePanel extends JPanel {
         });
     }
 
-    public void addTile(String name, int price, String imageFileName, int pos, int posX, int posY) {
+    public void addTile(String name, int price, int rent, String imageFileName, int pos, int posX, int posY) {
         runOnEventDispatchThread(() -> {
             gbc.gridy = posY; 
             gbc.gridx = posX;
 
             int id = posY * Main.getBoardSize_x() + posX;
 
-            BOARD_PANEL.add(new BoardTile(name, price, imageFileName, pos, id), gbc);
+            BOARD_PANEL.add(new BoardTile(name, price, rent, imageFileName, pos, id), gbc);
             BOARD_PANEL.revalidate();
             BOARD_PANEL.repaint();
         });
