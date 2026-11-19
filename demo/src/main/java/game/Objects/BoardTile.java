@@ -164,7 +164,7 @@ public class BoardTile extends Tile {
     public void payRent(Player player) {
         if (!isOwned() || owner == player) return;
         player.reduceMoney(rent);
-        owner.reduceMoney(-rent);
+        owner.giveMoney(rent);
     }
 
     public void onEnter(Player p) {     

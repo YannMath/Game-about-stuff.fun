@@ -54,6 +54,12 @@ public class Player {
         System.out.println("[LOG] " + name + " had to pay " + amountReduced + "$ - current money: " + money);
     }
 
+    public void giveMoney(int amountGiven) {
+        this.money += amountGiven;
+
+        System.out.println("[LOG] " + name + " received " + amountGiven + "$ - current money: " + money);
+    }
+
     public void buy() {
         runOnEventDispatchThread(() -> {
             BoardTile targetTile = getCurrentTile();

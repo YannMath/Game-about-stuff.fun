@@ -89,7 +89,7 @@ local startTile = {
         --Nothing here to look at
     end,
     onPass = function(player)
-        player:reduceMoney(-200)
+        player:giveMoney(200)
     end
 }
 
@@ -118,7 +118,7 @@ local busStop1 = {
         player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
         if getTileByPos(2):isOwned() then
-            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+            owner = getTileByPos(2):getOwner():giveMoney(50)
         end
     end
 }
@@ -133,7 +133,7 @@ local busStop2 = {
         player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
         if getTileByPos(2):isOwned() then
-            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+            owner = getTileByPos(2):getOwner():giveMoney(50)
         end
     end
 }
@@ -148,7 +148,7 @@ local busStop3 = {
         player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
         if getTileByPos(2):isOwned() then
-            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+            owner = getTileByPos(2):getOwner():giveMoney(50)
         end
     end
 }
@@ -163,7 +163,7 @@ local busStop4 = {
         player:reduceMoney(50)
         player:moveTo(previousStop.pos, 50)
         if getTileByPos(2):isOwned() then
-            owner = getTileByPos(2):getOwner():reduceMoney(-50)
+            owner = getTileByPos(2):getOwner():giveMoney(50)
         end
     end
 }
